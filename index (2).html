@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oklahoma Social Studies Standards Explorer</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;       /* Oklahoma Blue */
+      --primary-hover: #1d4ed8;
+      --accent: #d97706;        /* Gold/Bronze */
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 20px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .controls-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      margin-bottom: 25px;
+    }
+
+    .grid-filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    select, input[type="text"] {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: #fff;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    select:focus, input[type="text"]:focus {
+      border-color: var(--primary-hover);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .reset-row {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .reset-btn {
+      background: var(--bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 9px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reset-btn:hover {
+      background: var(--border);
+      color: var(--text-main);
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .results-count {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .standards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .standard-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 16px 20px;
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--primary);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      position: relative;
+    }
+
+    .standard-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .standard-card.practice {
+      border-left-color: var(--accent);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .code-badge {
+      background-color: #eff6ff;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .practice .code-badge {
+      background-color: #fffbeb;
+      color: var(--accent);
+    }
+
+    .strand-tag {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .card-text {
+      font-size: 1rem;
+      color: var(--text-main);
+      white-space: pre-line;
+    }
+
+    .copy-btn {
+      margin-top: 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px dashed var(--border);
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Oklahoma Academic Standards</h1>
+      <p>Social Studies Interactive Lookup Tool</p>
+    </header>
+
+    <div class="controls-card">
+      <div class="grid-filters">
+        <!-- Step 1: Choose Grade -->
+        <div class="filter-group">
+          <label for="gradeSelect">1. Select Grade/Course</label>
+          <select id="gradeSelect">
+            <option value="">-- Choose Grade --</option>
+          </select>
+        </div>
+
+        <!-- Step 2: Choose Practice vs Content -->
+        <div class="filter-group">
+          <label for="typeSelect">2. Select Type</label>
+          <select id="typeSelect" disabled>
+            <option value="">-- Choose Type --</option>
+          </select>
+        </div>
+
+        <!-- Step 3: Choose Broad Standard -->
+        <div class="filter-group">
+          <label for="standardSelect">3. Broad Standard / Strand</label>
+          <select id="standardSelect" disabled>
+            <option value="">-- Choose Broad Standard --</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="reset-row">
+        <button type="button" id="resetBtn" class="reset-btn">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="results-header">
+      <h2>Substandards</h2>
+      <span class="results-count" id="resultsCount">0 items shown</span>
+    </div>
+
+    <div class="standards-list" id="standardsList">
+      <div class="empty-state">Select a Grade, Type, and Broad Standard above to view specific substandards.</div>
+    </div>
+  </div>
+
+  <script>
+    /* ====================================================================
+       OKLAHOMA SOCIAL STUDIES ACADEMIC STANDARDS DATA DATASET
+       You can expand or edit this JSON object to add more grades/standards.
+       ==================================================================== */
+    const oklahomaStandards = {
+  "Grade 1": {
+    "Practices": [
+      {
+        "id": "1.P.1",
+        "title": "Practice 1: Apply critical thinking skills to address authentic civic issues.",
+        "substandards": [
+          {
+            "code": "1.P.1.1",
+            "text": "Demonstrate an understanding of the virtue of civil discourse to analyze and address real-world problems.\nA. Describe how people can work together to make decisions in the classroom and school.\nB. Engage in democratic processes to address authentic, real-world problems in the classroom.\nC. Identify and discuss local problems and ways in which people are trying to address these problems."
+          },
+          {
+            "code": "1.P.1.2",
+            "text": "Develop practices which demonstrate an understanding that social studies involves the evaluation of evidence.\nA. Collaboratively ask and respond to essential questions of common concerns to the student and community.\nB. Use supporting questions to help guide learning of specific social studies content.\nC. Practice critical thinking skills by responding to various levels of open-ended questions.\nD. With guidance, demonstrate understanding of social studies content through completion of authentic tasks."
+          }
+        ]
+      },
+      {
+        "id": "1.P.2",
+        "title": "Practice 2: Use interdisciplinary tools to acquire, apply, and evaluate content understanding of the four strands of social studies.",
+        "substandards": [
+          {
+            "code": "1.P.2.1",
+            "text": "Demonstrate an understanding of the principles of government, the benefits of democratic systems, and their responsibilities as citizens.\nA. Identify democratic principles such as equality, fairness, and respect for the law.\nB. Identify responsibilities of people in authority in school and community settings.\nC. Describe the purposes of rules in various settings (e.g., family, classroom, school), how rules are made, and consequences for violating rules."
+          },
+          {
+            "code": "1.P.2.2",
+            "text": "Develop skills which demonstrate an understanding of historical events and the people who shaped our history.\nA. Identify a primary source of information and with support, gather basic information (i.e., author, date, facts).\nB. Identify points of view and examples relevant to the student’s experiences.\nC. Explain possible reasons for an event and make simple timelines which reflect cause-effect relationships, with guidance and support."
+          },
+          {
+            "code": "1.P.2.3",
+            "text": "Demonstrate a mastery of geographic concepts and the use of geographic tools to understand the impact of geography on the past and present.\nA. Answer geographic questions using geographic information about the student’s own community.\nB. Identify and describe the community’s human and physical environment through the use and creation of simple maps and photographs of the community.\nC. Identify how the physical environment impacts our daily lives and affects human activities."
+          },
+          {
+            "code": "1.P.2.4",
+            "text": "Identify the principles of economic systems and develop an understanding of the benefits of a market system in local, national, and global settings.\nA. Collaboratively gather simple economic data from graphs.\nB. Identify needs and wants, including the concept of freedom of choice.\nC. Identify examples of the goods and services that school and community workers provide."
+          }
+        ]
+      },
+      {
+        "id": "1.P.3",
+        "title": "Practice 3: Engage in critical, active reading of primary and secondary sources related to social studies concepts.",
+        "substandards": [
+          {
+            "code": "1.P.3.1",
+            "text": "Comprehend, evaluate, and synthesize textual sources to acquire and refine knowledge in the social studies.\nA. Locate the topic or main idea and supporting details of a text.\nB. Use titles and graphic features, including photographs and illustrations, to understand a text."
+          },
+          {
+            "code": "1.P.3.2",
+            "text": "Apply critical reading and thinking skills to interpret, evaluate, and respond to a variety of complex texts and perspectives.\nA. Identify the author’s purpose, with guidance and support.\nB. Locate facts that are clearly stated in a text (e.g., who, what, where, when, why, how).\nC. Ask and answer basic questions and engage in collaborative discussions about appropriate topics in a text."
+          }
+        ]
+      },
+      {
+        "id": "1.P.4",
+        "title": "Practice 4: Develop a variety of evidence-based written products designed for multiple purposes.",
+        "substandards": [
+          {
+            "code": "1.P.4.1",
+            "text": "Summarize and paraphrase, integrate evidence, and cite sources to create written products, research projects, and presentations for multiple purposes related to social studies content.\nA. Draw, label, dictate, and write an informative product with guidance and support.\nB. With guidance and support, draw, label, dictate, and write to express an opinion, providing reasons as support."
+          },
+          {
+            "code": "1.P.4.2",
+            "text": "Engage in authentic research to acquire, refine, and share knowledge through written presentations and products.\nA. With guidance and support, generate a list of topics of interest and questions about social studies.\nB. Organize information found during group research, using graphic organizers and other aids with guidance and support.\nC. With guidance and support, create a simple presentation to communicate ideas and thoughts."
+          }
+        ]
+      }
+    ],
+    "Content": [
+      {
+        "id": "1.C.1",
+        "title": "Standard 1: Analyze their role as a citizen in a community.",
+        "substandards": [
+          {
+            "code": "1.C.1.1",
+            "text": "Identify the basic purposes of our nation’s government and explain how it protects a citizen's rights, while providing for the common good (e.g., health, safety, and the protection of property)."
+          },
+          {
+            "code": "1.C.1.2",
+            "text": "Describe how people hold the power in our government by electing leaders who make laws."
+          },
+          {
+            "code": "1.C.1.3",
+            "text": "Define the concept of civic duty, identifying characteristics of responsible citizenship (e.g., respect for laws, voting, and volunteerism)."
+          },
+          {
+            "code": "1.C.1.4",
+            "text": "Describe how citizens within communities work together to accomplish common tasks, using examples relevant to student experiences."
+          },
+          {
+            "code": "1.C.1.5",
+            "text": "Explain patriotic traditions that unite citizens.\nA.  Explain the purpose and meaning of The Pledge of Allegiance and the significance of the phrase “under God”.\nB.  Explain the purpose and the meaning of the Salute to the Oklahoma Flag.\nC.  Describe appropriate flag etiquette for both the national and state flags.\nD.  Explain appropriate ways to show respect during the playing of the national anthem, “The Star-Spangled Banner”, by Francis Scott Key.\nE.  Examine ways citizens can demonstrate patriotism, including military service, honoring veteran cemeteries, and celebrating Independence Day.\nF.   Explain how we celebrate our nation and its history through patriotic songs (e.g., “My Country ‘tis of Thee”, “God Bless America”)."
+          },
+          {
+            "code": "1.C.1.6",
+            "text": "Using biographies from early United States of America’s history, explain historical examples of patriotism and civic virtue as exemplified during the early American republic, including\nA. Leadership (e.g., Chief Powhatan, Patrick Henry, Thomas Jefferson)\nB. Military Service (e.g., John Paul Jones, Nathan Hale)\nC. Science and Technology (e.g., Benjamin Banneker, Meriwether Lewis, William Clark)\nD. Public Service (e.g., Benjamin Franklin, George Washington, James Madison)."
+          },
+          {
+            "code": "1.C.1.7",
+            "text": "Identify and explain the meaning of the United States of America’s official motto, \"In God we trust”."
+          }
+        ]
+      },
+      {
+        "id": "1.C.2",
+        "title": "Standard 2: Examine how we learn from the important events and people of the past.",
+        "substandards": [
+          {
+            "code": "1.C.2.1",
+            "text": "Describe and explain the meaning of important symbols of the United States of America (e.g., Bald Eagle, Liberty Bell) and examine how American symbols, holidays, and celebrations help to develop a shared sense of history and community."
+          },
+          {
+            "code": "1.C.2.2",
+            "text": "Identify primary sources (e.g., letters, photographs, diaries, newspapers, artifacts, official papers) and explain how they help us learn about the past through firsthand accounts."
+          },
+          {
+            "code": "1.C.2.3",
+            "text": "Read and construct basic timelines of related events to demonstrate an understanding of the concept of chronology, as well as cause and effect relationships."
+          },
+          {
+            "code": "1.C.2.4",
+            "text": "Compare ways individuals and groups in the local community and region lived in the past with how they live today (e.g., housing, communication, transportation, occupations)."
+          },
+          {
+            "code": "1.C.2.5",
+            "text": "Explain how American Indians lived in environments and communities of their original homelands and thrive in Tribal communities today."
+          },
+          {
+            "code": "1.C.2.6",
+            "text": "Explain how citizens from different cultural backgrounds immigrated to the United States of America, and contributed their traditions to our national heritage."
+          },
+          {
+            "code": "1.C.2.7",
+            "text": "Identify stories about people and ideas that influenced the American colonists, the Founders, and American culture."
+          },
+          {
+            "code": "1.C.2.8",
+            "text": "Describe the contributions of people and groups commemorated on federal holidays (e.g., Veterans Day, Presidents’ Day, Dr. Martin Luther King, Jr. Day, Independence Day)."
+          }
+        ]
+      },
+      {
+        "id": "1.C.3",
+        "title": "Standard 3: Demonstrate knowledge of basic geographic concepts.",
+        "substandards": [
+          {
+            "code": "1.C.3.1",
+            "text": "Explain that a globe is a model of the Earth and that maps can be used to represent local places or specific regions of the state, nation, or world."
+          },
+          {
+            "code": "1.C.3.2",
+            "text": "Describe the difference between physical and political maps and how each can be used to inform us about the world."
+          },
+          {
+            "code": "1.C.3.3",
+            "text": "Construct maps of specific places, such as the community and state, and describe the relative location of physical and human features."
+          },
+          {
+            "code": "1.C.3.4",
+            "text": "Distinguish between landmasses and bodies of water on a map and globe, identifying the continent of North America and the countries and oceans bordering the United States of America."
+          },
+          {
+            "code": "1.C.3.5",
+            "text": "Identify cardinal directions and use them to identify specific locations on a map and globe, including the location of the national capital, Washington, D.C., and the Oklahoma state capital, Oklahoma City."
+          },
+          {
+            "code": "1.C.3.6",
+            "text": "Identify natural resources (e.g., water, soil, vegetation, minerals) and describe how people use natural resources to meet their needs and wants."
+          },
+          {
+            "code": "1.C.3.7",
+            "text": "Identify ways in which people adapt to the world around them (e.g., specific clothing for different climates, storm shelters)."
+          },
+          {
+            "code": "1.C.3.8",
+            "text": "Identify how the physical environment of the community has been modified to meet specific needs (e.g., agricultural crops, forestry, dams)."
+          },
+          {
+            "code": "1.C.3.9",
+            "text": "Describe how the physical environment affects occupational and recreational opportunities in the local community and region."
+          },
+          {
+            "code": "1.C.3.10",
+            "text": "Define culture and identify the elements of culture (e.g., language, customs, religion, food, clothing), using examples relevant to student experiences."
+          }
+        ]
+      },
+      {
+        "id": "1.C.4",
+        "title": "Standard 4: Describe the characteristics of free enterprise. Building the necessary skills and engaging in social studies practices, students will begin to apply their understanding of the four strands of social studies: Civics, History, Geography, and Economics. Using examples from the community, state, and nation, students will continue to define and explore the roles and responsibilities of citizenship through primary and secondary sources, as well as literature and the arts.",
+        "substandards": [
+          {
+            "code": "1.C.4.1",
+            "text": "Explain how citizens are free to make choices about what to buy and that choices are necessary because wants cannot always be met."
+          },
+          {
+            "code": "1.C.4.2",
+            "text": "Differentiate between natural resources and human-made products."
+          },
+          {
+            "code": "1.C.4.3",
+            "text": "Explain how goods are produced from natural resources using human labor, identifying examples of goods and services that people in the local community produce (e.g., agricultural products, oil and gas, aerospace industry)."
+          },
+          {
+            "code": "1.C.4.4",
+            "text": "Explain how people are paid for their labor and how some people own their own businesses to earn money."
+          },
+          {
+            "code": "1.C.4.5",
+            "text": "Compare the roles of consumers and producers in the United States of America’s economy and explain how individuals are both producers and consumers."
+          },
+          {
+            "code": "1.C.4.6",
+            "text": "Explain the costs and benefits of spending and saving in order to meet one’s needs and wants."
+          },
+          {
+            "code": "1.C.4.7",
+            "text": "Describe how setting goals and creating a budget help people obtain their needs and wants."
+          },
+          {
+            "code": "1.C.4.8",
+            "text": "Explain how historical American inventors and entrepreneurs used their ideas to help others (e.g., Robert Fulton, Samuel Morse, Alexander Graham Bell, Thomas Edison)."
+          }
+        ]
+      }
+    ]
+  },
+  "Grade 2": {
+    "Practices": [
+      {
+        "id": "2.P.1",
+        "title": "Practice 1: Apply critical thinking skills to address authentic civic issues.",
+        "substandards": [
+          {
+            "code": "2.P.1.1",
+            "text": "Demonstrate an understanding of the virtue of civil discourse to analyze and address real-world problems.\nA. Explain how people make decisions in a constitutional republic, using examples from their community and state.\nB. Use democratic processes to consider and propose actions to address authentic, real-world problems in the community and state.\nC. Describe a range of local and state problems and how communities and local governments are trying to address them."
+          },
+          {
+            "code": "2.P.1.2",
+            "text": "Develop practices which demonstrate an understanding that social studies involves the evaluation of evidence.\nA. Ask and respond to enduring essential questions of common concerns to the community and state.\nB. Develop responses to supporting questions relevant to specific social studies content knowledge.\nC. Reinforce critical thinking skills by regularly asking and responding to levels of open-ended questions.\nD. Demonstrate understanding of social studies content through completion of authentic tasks and assessments."
+          }
+        ]
+      },
+      {
+        "id": "2.P.2",
+        "title": "Practice 2: Use interdisciplinary tools to acquire, apply, and evaluate content understanding of the four strands of social studies.",
+        "substandards": [
+          {
+            "code": "2.P.2.1",
+            "text": "Demonstrate an understanding of the principles of government, the benefits of democratic systems, and their responsibilities as citizens.\nA. Describe civic virtues and democratic principles such as equality, fairness, and respect for legitimate authority.\nB. Describe the basic structure of government at the local, state, and Tribal levels, including the importance of citizen participation\nC. Explain the purposes of laws and government in the community and state, examining the role of elected officials in making laws."
+          },
+          {
+            "code": "2.P.2.2",
+            "text": "Develop skills which demonstrate an understanding of historical events and the people who shaped our history.\nA. Explain the difference between a primary and secondary source of information; gather basic information (i.e., author, date, facts).\nB. Define point of view and give examples relevant to the student’s experiences.\nC. Generate possible reasons for an event and draw conclusions from simple timelines by identifying immediate cause and effect relationships."
+          },
+          {
+            "code": "2.P.2.3",
+            "text": "Demonstrate a mastery of geographic concepts and the use of geographic tools to understand the impact of geography on the past and present.\nA. Ask and answer geographic questions, using geographic information about the student’s community and state.\nB. Describe the community and state’s human and physical environment by creating and using maps, graphs, and other geographic models, including aerial photography.\nC. Identify and describe how humans modify and adapt to their physical environment, using its natural and human resources."
+          },
+          {
+            "code": "2.P.2.4",
+            "text": "Identify the principles of economic systems and develop an understanding of the benefits of a market system in local, national, and global settings.\nA. Gather basic economic data from various types of graphs and charts.\nB. Describe freedom of choice when determining needs and wants in a free market, including costs and benefits resulting from economic decisions.\nC. Describe examples of the goods and services that local and state governments provide, explaining why people trade."
+          }
+        ]
+      },
+      {
+        "id": "2.P.3",
+        "title": "Practice 3: Engage in critical, active reading of primary and secondary sources related to social studies concepts.",
+        "substandards": [
+          {
+            "code": "2.P.3.1",
+            "text": "Comprehend, evaluate, and synthesize textual sources to acquire and refine knowledge in the social studies.\nA. Summarize the main idea and locate supporting details of a text (e.g., primary and secondary sources).\nB. Use graphic features of a text (e.g., photographs, titles, headings, subheadings, charts, illustrations, and graphs) to understand content."
+          },
+          {
+            "code": "2.P.3.2",
+            "text": "Apply critical reading and thinking skills to interpret, evaluate, and respond to a variety of complex texts and perspectives.\nA. Determine the author’s purpose, including what the author wants to answer, explain, or describe in informational texts.\nB. Locate facts (e.g., who, what, where, when, why, how) to demonstrate an understanding of key details in a text.\nC. Ask and answer questions to clarify information and engage in collaborative discussions about appropriate topics in social studies."
+          }
+        ]
+      },
+      {
+        "id": "2.P.4",
+        "title": "Practice 4: Develop a variety of evidence-based written products designed for multiple purposes.",
+        "substandards": [
+          {
+            "code": "2.P.4.1",
+            "text": "Summarize and paraphrase, integrate evidence, and cite sources to create written products, research projects, and presentations for multiple purposes related to social studies content.\nA. Compose informative written products, focusing on the facts about a topic, including a main idea with supporting details.\nB. Express an opinion about a topic by composing a written product and providing logical reasons as support."
+          },
+          {
+            "code": "2.P.4.2",
+            "text": "Engage in authentic research to acquire, refine, and share knowledge through written presentations and products.\nA. Generate a list of topics of interest and individual questions about a specific topic in social studies.\nB. Organize information found during group or individual research, using graphic organizers or other aids.\nC. Create a simple presentation to communicate ideas and thoughts gathered from research."
+          }
+        ]
+      }
+    ],
+    "Content": [
+      {
+        "id": "2.C.1",
+        "title": "Standard 1: Explain the importance of the basic principles that provide the foundation of the United States of America’s system of government.",
+        "substandards": [
+          {
+            "code": "2.C.1.1",
+            "text": "Describe the fundamental principles of our nation’s government, including liberty, equality, fair treatment, and respect for the property of others."
+          },
+          {
+            "code": "2.C.1.2",
+            "text": "Explain and describe how a free people form a government to better protect their lives, property, and freedoms, and how the Constitution of the United States of America outlines the structure of our nation’s three branches of government."
+          },
+          {
+            "code": "2.C.1.3",
+            "text": "Identify the basic roles of national leaders including the President of the United States of America, members of the United States of America Congress, and justices of the Supreme Court."
+          },
+          {
+            "code": "2.C.1.4",
+            "text": "Explain that local, state, national, and Tribal governments exist to represent the needs of the people, make and enforce laws, and help resolve conflicts."
+          },
+          {
+            "code": "2.C.1.5",
+            "text": "Explain how American Indian Nations are self-governing people who make decisions through Tribal representatives in order to meet the needs of their citizens and manage their land and resources."
+          },
+          {
+            "code": "2.C.1.6",
+            "text": "Explain how individual liberties are protected by the Bill of Rights, using examples from the First Amendment."
+          },
+          {
+            "code": "2.C.1.7",
+            "text": "Explain how active citizens participate in democratic governments by voting to elect officials who represent them and by running for public office."
+          },
+          {
+            "code": "2.C.1.8",
+            "text": "Explain how all people can play important and responsible roles in their community through making good choices, obeying laws, volunteering, and working in public service (e.g., law enforcement, fire and rescue, public education)."
+          },
+          {
+            "code": "2.C.1.9",
+            "text": "Describe the responsibility of paying taxes and explain how taxes are used to provide community services (e.g.,schools, fire and police protection, roads, parks and recreation)."
+          },
+          {
+            "code": "2.C.1.10",
+            "text": "Examine the meaning of the phrase, “E Pluribus Unum” (\"Out of many, one\") found on the Great Seal of the United States of America."
+          }
+        ]
+      },
+      {
+        "id": "2.C.2",
+        "title": "Standard 2: Examine the history of significant events and individuals who impacted our nation and the world.",
+        "substandards": [
+          {
+            "code": "2.C.2.1",
+            "text": "Compare perspectives of people in the past to people in the present and explain the importance of considering multiple viewpoints."
+          },
+          {
+            "code": "2.C.2.2",
+            "text": "Explain the benefits of using both primary sources (e.g., diaries, documents, photographs, artifacts, oral accounts) and secondary sources (e.g., textbooks, films, literature) to understand a past or current event."
+          },
+          {
+            "code": "2.C.2.3",
+            "text": "Explain reasons why past events happened and the changes they created by identifying the cause(s) and describing the effect(s) of an historical event."
+          },
+          {
+            "code": "2.C.2.4",
+            "text": "Describe why people from various places and cultures have migrated to the United States of America (e.g., improved quality of life, economic opportunities, individual freedom)."
+          },
+          {
+            "code": "2.C.2.5",
+            "text": "Identify the contributions of people and groups who have shaped our history and explain how they are honored by federal holidays (e.g., Veterans Day, Presidents’ Day, Dr. Martin Luther King, Jr. Day, Constitution Day, Memorial Day, Independence Day)."
+          },
+          {
+            "code": "2.C.2.6",
+            "text": "Research biographies of notable Americans who exhibited patriotism and civic virtues by describing how each individual contributed to the welfare and betterment of the nation.\nA. Leadership (e.g., Abraham Lincoln, Chief Joseph, Rosa Parks, Cesar Chavez)\nB. Military Service (e.g., Davy Crockett, General Dwight Eisenhower, General Colin Powell)\nC. Science and Technology (e.g., Orville and Wilbur Wright, Jonas Salk, Amelia Earhart, Neil Armstrong)\nD. Public Service (e.g., Harriet Tubman, Clara Barton, Theodore Roosevelt, Mary McLeod Bethune)."
+          },
+          {
+            "code": "2.C.2.7",
+            "text": "Examine how people from other nations and other times made a difference in their communities around the world (e.g., Cincinnatus, Winston Churchill, Mohandas Gandhi, Nelson Mandela)."
+          }
+        ]
+      },
+      {
+        "id": "2.C.3",
+        "title": "Standard 3: Describe the physical and human characteristics of their environment.",
+        "substandards": [
+          {
+            "code": "2.C.3.1",
+            "text": "Construct and use basic physical and political maps, including a legend and compass rose; explain how symbols are used to represent physical features and man-made structures on a map."
+          },
+          {
+            "code": "2.C.3.2",
+            "text": "Describe the relative location of the student’s community to major metropolitan centers of the state, using cardinal and intermediate directions."
+          },
+          {
+            "code": "2.C.3.3",
+            "text": "Identify basic types of major landforms and bodies of water on physical maps."
+          },
+          {
+            "code": "2.C.3.4",
+            "text": "Construct basic physical maps indicating the continents and oceans of the world."
+          },
+          {
+            "code": "2.C.3.5",
+            "text": "Describe the location of places on a map and globe, using a basic grid system."
+          },
+          {
+            "code": "2.C.3.6",
+            "text": "Ask geographic questions about where places are located and why they are located there."
+          },
+          {
+            "code": "2.C.3.7",
+            "text": "Examine how weather patterns, seasons, climate, and the physical features of a place can affect where and how people live."
+          },
+          {
+            "code": "2.C.3.8",
+            "text": "Compare the characteristics of land use in urban and rural environments (e.g., agricultural and recreational purposes, manufacturing, shopping, community buildings, schools, modes of transportation)."
+          },
+          {
+            "code": "2.C.3.9",
+            "text": "Explain and describe human interaction with the environment by describing how humans both adapt to (e.g., clothing, housing, food choices) and modify it (e.g., farming, irrigation, mining, water reservoirs, construction of homes, businesses, highways) to meet their needs."
+          },
+          {
+            "code": "2.C.3.10",
+            "text": "Examine cultural traits of families and communities, understanding that while culture makes us unique, all cultures share common features (e.g., language, customs, religious beliefs, economic activities, traditional clothing, shelter)."
+          }
+        ]
+      },
+      {
+        "id": "2.C.4",
+        "title": "Standard 4: Understand basic economic concepts of a free market.",
+        "substandards": [
+          {
+            "code": "2.C.4.1",
+            "text": "Describe how citizens live and work in a free market where they can make decisions about their work, what they want to produce, and what they want to buy."
+          },
+          {
+            "code": "2.C.4.2",
+            "text": "Explain how goods are produced by using natural resources (e.g., water, soil, wood, coal), human resources (e.g., people at work), and capital resources (e.g., machines, tools, computers, buildings)."
+          },
+          {
+            "code": "2.C.4.3",
+            "text": "Explain that goods and services can be purchased by consumers using both money and credit."
+          },
+          {
+            "code": "2.C.4.4",
+            "text": "Explain how prices of goods and services are affected by supply and demand, using examples relevant to student experiences."
+          },
+          {
+            "code": "2.C.4.5",
+            "text": "Explain that scarcity is a condition of not being able to have all of the goods and services that a person wants or needs."
+          },
+          {
+            "code": "2.C.4.6",
+            "text": "Define trade and explain how trade can lead to interdependence among people and communities."
+          },
+          {
+            "code": "2.C.4.7",
+            "text": "Identify and describe financial institutions in the community, such as banks, as businesses that provide services to help people manage and save their earnings."
+          },
+          {
+            "code": "2.C.4.8",
+            "text": "Use biographies of American inventors and entrepreneurs, explaining how their ideas and work helped the nation grow (e.g., George Washington Carver, John Deere, Robert Fulton, Madam C.J. Walker, Henry Ford)."
+          },
+          {
+            "code": "2.C.4.9",
+            "text": "Examine how inventors from other nations and other times made a difference in the way people live today (e.g., Leonardo da Vinci, Marie Curie, Louis Braille, Albert Einstein)."
+          }
+        ]
+      }
+    ]
+  },
+  "Grade 3": {
+    "Practices": [
+      {
+        "id": "3.P.1",
+        "title": "Practice 1: Apply critical thinking skills to address authentic civic issues.",
+        "substandards": [
+          {
+            "code": "3.P.1.1",
+            "text": "Demonstrate an understanding of the virtue of civil discourse to analyze and address real-world problems.\nA. Explain how people make decisions in a constitutional republic, using examples from their community and state.\nB. Use democratic processes to consider and propose actions to address authentic, real-world problems in the community and state.\nC. Describe a range of local and state problems and how communities and local governments are trying to address them."
+          },
+          {
+            "code": "3.P.1.2",
+            "text": "Develop practices which demonstrate an understanding that social studies involves the evaluation of evidence.\nA. Ask and respond to enduring essential questions of common concerns to the community and state.\nB. Develop responses to supporting questions relevant to specific social studies content knowledge.\nC. Reinforce critical thinking skills by regularly asking and responding to levels of open-ended questions.\nD. Demonstrate understanding of social studies content through completion of authentic tasks and assessments."
+          }
+        ]
+      },
+      {
+        "id": "3.P.2",
+        "title": "Practice 2: Use interdisciplinary tools to acquire, apply, and evaluate content understanding of the four strands of social studies.",
+        "substandards": [
+          {
+            "code": "3.P.2.1",
+            "text": "Demonstrate an understanding of the principles of government, the benefits of democratic systems, and their responsibilities as citizens.\nA. Describe civic virtues and democratic principles such as equality, fairness, and respect for legitimate authority.\nB. Describe the basic structure of government at the local, state, and Tribal levels, including the importance of citizen participation.\nC. Explain the purposes of laws and government in the community and state, examining the role of elected officials in making laws."
+          },
+          {
+            "code": "3.P.2.2",
+            "text": "Develop skills which demonstrate an understanding of historical events and the people who shaped our history.\nA. Explain the difference between a primary and secondary source of information; gather basic information (i.e., author, date, facts).\nB. Define point of view and give examples relevant to the student’s experiences.\nC. Generate possible reasons for an event and draw conclusions from simple timelines by identifying immediate cause and effect relationships."
+          },
+          {
+            "code": "3.P.2.3",
+            "text": "Demonstrate a mastery of geographic concepts and the use of geographic tools to understand the impact of geography on the past and present.\nA. Ask and answer geographic questions, using geographic information about the student’s community and state.\nB. Describe the community and state’s human and physical environment by creating and using maps, graphs, and other geographic models, including aerial photography.\nC. Identify and describe how humans modify and adapt to their physical environment, using its natural and human resources."
+          },
+          {
+            "code": "3.P.2.4",
+            "text": "Identify the principles of economic systems and develop an understanding of the benefits of a market system in local, national, and global settings.\nA. Gather basic economic data from various types of graphs and charts.\nB. Describe freedom of choice when determining needs and wants in a free market, including costs and benefits resulting from economic decisions.\nC. Describe examples of the goods and services that local and state governments provide, explaining why people trade."
+          }
+        ]
+      },
+      {
+        "id": "3.P.3",
+        "title": "Practice 3: Engage in critical, active reading of primary and secondary sources related to social studies concepts.",
+        "substandards": [
+          {
+            "code": "3.P.3.1",
+            "text": "Comprehend, evaluate, and synthesize textual sources to acquire and refine knowledge in the social studies.\nA. Summarize the main idea and locate supporting details of a text (e.g., primary and secondary sources).\nB. Use graphic features of a text (e.g., photographs, titles, headings, subheadings, charts, illustrations, and graphs) to understand content."
+          },
+          {
+            "code": "3.P.3.2",
+            "text": "Apply critical reading and thinking skills to interpret, evaluate, and respond to a variety of complex texts and perspectives.\nA. Determine the author’s purpose, including what the author wants to answer, explain, or describe in informational texts.\nB. Locate facts (e.g., who, what, where, when, why, how) to demonstrate an understanding of key details in a text.\nC. Ask and answer questions to clarify information and engage in collaborative discussions about appropriate topics in social studies."
+          }
+        ]
+      },
+      {
+        "id": "3.P.4",
+        "title": "Practice 4: Develop a variety of evidence-based written products designed for multiple purposes.",
+        "substandards": [
+          {
+            "code": "3.P.4.1",
+            "text": "Summarize and paraphrase, integrate evidence, and cite sources to create written products, research projects, and presentations for multiple purposes related to social studies content.\nA. Compose informative written products, focusing on the facts about a topic, including a main idea with supporting details.\nB. Express an opinion about a topic by composing a written product and providing logical reasons as support."
+          },
+          {
+            "code": "3.P.4.2",
+            "text": "Engage in authentic research to acquire, refine, and share knowledge through written presentations and products.\nA. Generate a list of topics of interest and individual questions about a specific topic in social studies.\nB. Organize information found during group or individual research, using graphic organizers or other aids.\nC. Create a simple presentation to communicate ideas and thoughts gathered from research."
+          }
+        ]
+      }
+    ],
+    "Content": [
+      {
+        "id": "3.C.1",
+        "title": "Standard 1: Analyze the purpose of government and traits of responsible citizens.",
+        "substandards": [
+          {
+            "code": "3.C.1.1",
+            "text": "Read and describe the principle of a constitutional republic as government by the people.\nA. Explain how representatives of the people make and carry out laws in our communities, state, and nation.\nB. Explain that the Constitution of the United States of America and the Oklahoma Constitution are written plans for organizing the functions of government, which is composed of both state and national levels of authority.\nC. Describe the structure of Oklahoma’s government, including the role of major elected and appointed leaders in each of its three branches, including governor, state legislators, and court justices.\nD. Identify basic responsibilities of state and local governments (e.g., public safety, education, public works) and explain how taxes pay for services provided by local and state governments.\nE.  Read and explain how the Preamble to the Oklahoma Constitution reflects the power of the people and their reliance on spiritual guidance."
+          },
+          {
+            "code": "3.C.1.2",
+            "text": "Describe how American Indian Tribal governments are also based upon written constitutions and exercise the right to govern themselves (sovereignty) by making laws for Tribal lands and citizens, providing for schools and healthcare, and preserving Native culture and traditions."
+          },
+          {
+            "code": "3.C.1.3",
+            "text": "Explain how Oklahomans are united through our heritage, state symbols, and special commemorations that reflect common ideals.\nA. Describe the significance of symbols represented on the State Seal and Oklahoma Flag, explaining how the name of Oklahoma is derived from the Choctaw language and reflects the state’s American Indian heritage.\nB. Explain how Tribal people and their governments are represented by flags and seals, reflecting the unique culture, history, and traditional symbols of each Tribe.\nC. Examine the significance of community, state, and federal holidays.\nD. Identify and explain the meaning of the Oklahoma motto, “Labor omnia vincit,” reflecting the importance of hard work and labor.\nE. Explain how Oklahomans exhibit the “Oklahoma Standard” when they unite as neighbors during difficult times, including response and recovery from the bombing of the Alfred P. Murrah Federal Building."
+          },
+          {
+            "code": "3.C.1.4",
+            "text": "Define the concepts of civic virtue and examine the responsibilities of citizens.\nA. Examine why civility, cooperation, self-reliance, and respect for the law are important civic traits that support our communities, state, nation, and Tribes.\nB. Explain the importance of voting in elections and running for public office to the preservation of a constitutional republic.\nC. Describe how citizens can serve their community through jury duty and community service.\nD. Explain how military service is one of many ways that Oklahomans express their patriotism\nand sense of duty, exemplified by the Buffalo Soldiers, Native Code Talkers, and the 45th Infantry."
+          }
+        ]
+      },
+      {
+        "id": "3.C.2",
+        "title": "Standard 2: Examine Oklahoma’s geography and how people of Oklahoma interact with their environment.",
+        "substandards": [
+          {
+            "code": "3.C.2.1",
+            "text": "Use maps, graphs, photographs, charts, and geographic technology to organize information about people, places, and environments of the state."
+          },
+          {
+            "code": "3.C.2.2",
+            "text": "Examine Oklahoma’s political and physical features using physical and political maps.\nA. Explain the relative location of the student’s school and the state of Oklahoma to surrounding states and major physical regions of the United States of America.\nB. Distinguish between relative location and absolute location (latitude and longitude) to describe the location of Oklahoma’s major natural and human features on maps and globes.\nC. Interpret thematic maps of Oklahoma using essential map elements (e.g., title, legend, scale, compass rose) to examine geographic features of the state.\nD. Use both political and physical maps to identify Oklahoma’s major landforms, bodies of water, and major metropolitan centers, recognizing the Native origins of many place names.\nE. Describe the state’s climate and various natural vegetation zones, explaining how climate can affect natural vegetation and economic activities."
+          },
+          {
+            "code": "3.C.2.3",
+            "text": "Describe ways early inhabitants of present-day Oklahoma satisfied their basic needs and wants by interacting with the environment and using the natural resources of the region.\nA. Explain that people both adapt to and modify their environment in order to meet their basic needs and wants.\nB. Describe how the environment contains natural resources used by humans and identify the characteristics of renewable versus non-renewable resources by providing examples found in Oklahoma.\nC. Identify the ways in which physical geography influenced early American Indian cultures of the region (e.g., bison hunting, fur trading, farming).\nD. Describe how early settlers to the region adapted to and modified their environment (e.g., sod houses, windmills, irrigation of cash crops)."
+          },
+          {
+            "code": "3.C.2.4",
+            "text": "Examine how Oklahomans continue to adapt and modify their environments to meet their needs.\nA. Summarize how weather events, such as floods and tornadoes, impact the people and economy of Oklahoma.\nB. Explain how Oklahomans changed their environments to support development of the state (e.g., recreational lakes, hydroelectric dams, wildlife refuges, the McClellan-Kerr Arkansas River Navigation System).\nC. Examine the concepts of scarcity and surplus of natural resources and describe the role of citizens in conserving the state’s resources (e.g., water rationing, recycling efforts)."
+          }
+        ]
+      },
+      {
+        "id": "3.C.3",
+        "title": "Standard 3: Analyze the significant historical events and people contributing to the development of Oklahoma.",
+        "substandards": [
+          {
+            "code": "3.C.3.1",
+            "text": "Examine the state’s earliest peoples and the significance of their interactions.\nA. Describe the cause-effect relationship between historic events by creating basic timelines and drawing basic conclusions about key events in Oklahoma’s past.\nB. Describe how prior to European exploration of the region, American Indian cultures (e.g., Moundbuilders, Wichita, Caddo) traded goods using well-developed systems of intertribal trade routes.\nC. Examine reasons for early explorations (e.g., Coronado, Washington Irving, George Catlin) into present-day Oklahoma and summarize observations regarding the land, people, and resources.\nD. Describe the experiences of forced removals and relocation of American Indians to Indian Territory, explaining significant changes to American Indian cultures and ways of life.\nE. Explain that today Oklahoma is the home to thirty-nine American Indian Nations with unique traditions and ways of life, by comparing Tribal cultures."
+          },
+          {
+            "code": "3.C.3.2",
+            "text": "Describe the development of the state and its resources.\nA. Explain the importance of the cattle industry to the early economy, including the influence of Hispanic ranching traditions (e.g.,vaqueros, lasso, corral) and how cattle trails, such as the Great Western and Chisholm Trails became major transportation routes.\nB. Describe continued migration by various newcomers to the region, such as the Boomer Movement, identifying different points of view held by American Indians and settlers regarding the settling of Native lands.\nC. Explain how many African Americans migrated to Oklahoma, considering it an opportunity where farming communities, businesses, and schools could grow (e.g., historic Black towns,\nTulsa’s Greenwood District).\nD. Describe the commemoration of Statehood Day, November 16, as the joining of Indian and Oklahoma Territories and admission of Oklahoma to the United States of America in 1907.\nE. Describe challenges faced by citizens during the Dust Bowl, focusing on how Oklahomans adapted to harsh environmental conditions and survived economic hardships.\nF. Identify when and under what circumstances the student’s community was founded and describe the different groups of people who have influenced its growth and development."
+          },
+          {
+            "code": "3.C.3.3",
+            "text": "Describe how individuals have contributed to the development of Oklahoma by describing the achievements of notable citizens in the fields of\nA. Science and Medicine (e.g., Shannon Lucid, Thomas Stafford, Dr. Nazih Zuhdi)\nB. Technology (e.g., Sequoyah, Wiley Post)\nC. the Arts (e.g., Maria Tallchief, The Kiowa Six, Will Rogers, Woody Guthrie, Enoch Kelly Haney)\nD. Politics (e.g., Standing Bear, Clara Luper, Carl Albert, Wilma Mankiller)\nE. Sports (e.g., Bill Pickett, Jim Thorpe, Mickey Mantle, Shannon Miller)."
+          }
+        ]
+      },
+      {
+        "id": "3.C.4",
+        "title": "Standard 4: Identify and describe basic economic activities creating prosperity for the state. Learning in fourth grade challenges students to engage in the four strands of social studies: Civics, History, Geography, and Economics as applied to the early history and development of the United States. Content focuses on a regional study of physical and human geography of our country and its people, analyzing how we interact with our environment and how our environment impacts the way we live today.",
+        "substandards": [
+          {
+            "code": "3.C.4.1",
+            "text": "Describe the features of a market economic system.\nA. Explain how citizens make their own decisions about what goods or services are produced, and what is purchased, using examples from the local community.\nB. Describe how the laws of supply and demand impact people's choices about producing and consuming goods and services."
+          },
+          {
+            "code": "3.C.4.2",
+            "text": "Examine how entrepreneurs have contributed to the state’s economy.\nA. Explain how labor (human effort), land (natural resources), and capital (tools, machinery, technology) are used to produce goods and services.\nB. Describe how notable Oklahoma entrepreneurs (e.g., Gordon and May Lillie, O.W. Gurley, Frank Philips, Tom and Judy Love, Bill Braum) used their labor, land, and capital to build businesses and make a difference in their communities and the state."
+          },
+          {
+            "code": "3.C.4.3",
+            "text": "Describe the importance of Oklahoma’s goods and services to the state’s economic growth.\nA. Explain how Oklahoma’s oil and gas discoveries (e.g., the Glenn Pool and Oklahoma City Oil Field), affected the economic well-being of many Oklahomans and continue to be a significant economic sector.\nB. Examine how the development of recent economic activities has contributed to the state’s economy, identifying examples of goods and services provided by local businesses and industries (e.g., commercial agriculture, manufacturing, tourism, Tribal enterprises, and military installations).\nC. Describe how the state’s economy is connected to national and international trade by identifying major exports originating from Oklahoma (e.g., oil, aircraft, beef, wheat)."
+          }
+        ]
+      }
+    ]
+  },
+  "Grade 4": {
+    "Practices": [
+      {
+        "id": "4.P.1",
+        "title": "Practice 1: Apply critical thinking skills to address authentic civic issues.",
+        "substandards": [
+          {
+            "code": "4.P.1.1",
+            "text": "Demonstrate an understanding of the virtue of civil discourse to analyze and address real-world problems.\nA. Explain how human experiences can shape a person’s point of view about civic issues.\nB. Use a range of democratic procedures to discuss and make decisions about real-world problems in the community, region, and nation.\nC. Explain challenges of the past and present and describe strategies used to address local, regional, or national problems."
+          },
+          {
+            "code": "4.P.1.2",
+            "text": "Develop practices which demonstrate an understanding that social studies involves the evaluation of evidence.\nA. Ask and examine essential questions that are important to others, as well as enduring across social studies topics.\nB. Compare points of agreement from reliable information used to answer supporting questions related to social studies content.\nC. Demonstrate critical thinking skills by frequently developing and answering various depth of knowledge questions.\nD. Reinforce understanding of social studies content through collaborative inquiries and the completion of authentic tasks and assessments."
+          }
+        ]
+      },
+      {
+        "id": "4.P.2",
+        "title": "Practice 2: Use interdisciplinary tools to acquire, apply, and evaluate content understanding of the four strands of social studies.",
+        "substandards": [
+          {
+            "code": "4.P.2.1",
+            "text": "Demonstrate an understanding of the principles of government, the benefits of democratic systems, and their responsibilities as citizens.\nA. Explain democratic principles in historic documents by identifying examples of civic virtues and principles at work in state and national settings.\nB. Explain the structure, responsibilities, and powers exercised by officials of the national government and describe ways informed citizens can and should participate.\nC. Examine the principles of the Constitution of the United States of America, including how laws are made in a democratic society and are used to protect individual rights."
+          },
+          {
+            "code": "4.P.2.2",
+            "text": "Develop skills which demonstrate an understanding of historical events and the people who shaped our history.\nA. Compare and analyze primary and secondary sources from the past and present, including the intended audience and author’s purpose.\nB. Compare perspectives of individuals and groups from different regions and experiences, including the past and present.\nC. Explain multiple causes and effects of events and developments of the past or present; create timelines to identify multiple causes and effects from given information."
+          },
+          {
+            "code": "4.P.2.3",
+            "text": "Demonstrate a mastery of geographic concepts and the use of geographic tools to understand the impact of geography on the past and present.\nA. Answer geographic questions by organizing geographic information from historical as well as contemporary perspectives.\nB. Analyze human and physical features of the nation by drawing conclusions and explaining spatial relationships of physical and human places from geographic representations.\nC. Explain how environmental factors affected historical events and continue to impact contemporary human activities."
+          },
+          {
+            "code": "4.P.2.4",
+            "text": "Identify the principles of economic systems and develop an understanding of the benefits of a market system in local, national, and global settings.\nA. Interpret and draw conclusions from economic data on charts and graphs.\nB. Explain how the concept of supply and demand operates in a market economy, using historical and contemporary examples.\nC. Analyze the importance of innovation and entrepreneurship in a market economy."
+          }
+        ]
+      },
+      {
+        "id": "4.P.3",
+        "title": "Practice 3: Engage in critical, active reading of primary and secondary sources related to social studies concepts.",
+        "substandards": [
+          {
+            "code": "4.P.3.1",
+            "text": "Comprehend, evaluate, and synthesize textual sources to acquire and refine knowledge in the social studies.\nA. Use information accurately from a text when explaining the text explicitly and when drawing inferences from the text.\nB. Use information from multiple print or digital sources (e.g., timelines, maps, graphs, political cartoons, images, artwork) to answer a question."
+          },
+          {
+            "code": "4.P.3.2",
+            "text": "Apply critical reading and thinking skills to interpret, evaluate, and respond to a variety of complex texts and perspectives.\nA. Determine an author’s purpose and draw conclusions to evaluate how well the author’s purpose was achieved.\nB. Distinguish fact from opinion in nonfiction text and investigate facts for accuracy\nC. Engage in collaborative discussions about appropriate topics and texts, expressing ideas clearly to others in group and whole class settings."
+          }
+        ]
+      },
+      {
+        "id": "4.P.4",
+        "title": "Practice 4: Develop a variety of evidence-based written products designed for multiple purposes.",
+        "substandards": [
+          {
+            "code": "4.P.4.1",
+            "text": "Summarize and paraphrase, integrate evidence, and cite sources to create written products, research projects, and presentations for multiple purposes related to social studies content.\nA. Compose informative written products by introducing and developing a topic, supported by evidence (e.g. facts, examples, details) and maintaining an organized structure.\nB. Clearly state an opinion through written products, supported by examples, details, and reasoning."
+          },
+          {
+            "code": "4.P.4.2",
+            "text": "Engage in authentic research to acquire, refine, and share knowledge through written presentations and products.\nA. Formulate a viable research question related to expanding knowledge of social studies concepts.\nB. Organize information from research, quoting accurately from the source and avoiding plagiarism.\nC. Create presentations or products which summarize research findings from two or more sources."
+          }
+        ]
+      }
+    ],
+    "Content": [
+      {
+        "id": "4.C.1",
+        "title": "Standard 1: Explain the principles of democratic government and the role of citizens.",
+        "substandards": [
+          {
+            "code": "4.C.1.1",
+            "text": "Describe the principles of democratic governments, such as the United States of America.\nA. Identify the principles upon which our nation’s government is based, including the rule of law, compromise, equality, and individual rights of life, liberty and property.\nB. Examine the responsibility of the United States of America’s government as it relates to the promotion of the common good (e.g., security of the people, law and order, general welfare).\nC. Explain why the United States of America is considered a constitutional republic by identifying the people as the source of authority and describing how the people engage in the political process of fair elections at local, state, and national levels.\nD. Explain how the Constitution of the United States of America is a written plan for establishing the shared powers of government and organizing its institutions.\nE.  Explain basic principles expressed in the Declaration of Independence."
+          },
+          {
+            "code": "4.C.1.2",
+            "text": "Analyze the historical development of American Indian citizenship and constitutional rights in the United States of America. Examine how tribal sovereignty and United States of America citizenship function within the United States of America."
+          },
+          {
+            "code": "4.C.1.3",
+            "text": "Explain the concept of civic virtue and responsibilities of citizenship.\nA. Examine why citizens are expected to respect the law and institutions of authority.\nB. Analyze how fulfilling one’s civic responsibilities (e.g., voting, jury and military service, paying taxes) is necessary for the health and continuity of a constitutional republic.\nC. Describe how our nation’s constitutional republic relies on civil discourse, thoughtful decision-making, and compromise to make laws.\nD. Explain how citizens can contribute to the betterment of their communities through public service, charitable donations, and volunteerism.\nE. Summarize ways in which citizens are stewards of the nation’s environment by examining how natural resources can be managed wisely (e.g., recycling and anti-littering efforts, water conservation, development of renewable energy sources)."
+          }
+        ]
+      },
+      {
+        "id": "4.C.2",
+        "title": "Standard 2: Apply the tools and concepts of geography to examine the physical and human geography of the United States of America.",
+        "substandards": [
+          {
+            "code": "4.C.2.1",
+            "text": "Use geographic tools to acquire and process information from a spatial perspective.\nA. Use and describe various elements of maps (e.g., key/legend, scale, cardinal and intermediate directions) to examine the physical and human features of the nation.\nB. Use maps and other geographic representations (e.g., globes, charts, graphs) and geographic technologies to draw conclusions (e.g., settlement patterns, population trends, population density, relative location of natural resources to manufacturing centers).\nC. Use the system of latitude and longitude to identify the absolute location of physical and human features of the United States of America.\nD. Interpret aerial photographs, satellite images, and thematic maps to locate and identify physical and human features of the United States of America and North America.\nE. Analyze the human and physical characteristics of the United States of America using the Five Themes of Geography (location, place, human-environment-interaction, movement, region) as a\nstrategy to organize and compare each major region of the United States of America."
+          },
+          {
+            "code": "4.C.2.2",
+            "text": "Identify major physical regions of the United States of America and their unique features.\nA. Identify the location and the physical characteristics of the major landforms and bodies of water in the United States of America.\nB. Describe the location of major climate zones (tropical, temperate, continental, polar) explaining how climate affects natural vegetation.\nC. Draw conclusions from geographic data to explain how climate, vegetation, and bodies of water can affect the location and growth of settlements and the development of economic activities."
+          },
+          {
+            "code": "4.C.2.3",
+            "text": "Analyze the human characteristics of the United States of America.\nA. Identify and locate on a political map the fifty states, the nation’s capital and its most populated cities.\nB. Explain how the United States of America is home to people from different places and from many backgrounds.\nC. Examine motives for human migration by identifying basic push and pull factors (e.g., pull factors: economic opportunity, religious freedom, education; push factors: instability, conflict, natural disasters), using examples from United States of America history."
+          },
+          {
+            "code": "4.C.2.4",
+            "text": "Examine the concept of culture, including the distribution and complexity of major cultural groups of the United States of America.\nA. Identify the characteristics of culture (e.g., language, customs, religious beliefs, food, clothing, shelter) and compare cultural characteristics of different regions, including the influence of Native peoples and immigrants to each region and how they contribute to a shared American culture.\nB. Explain how culture can affect the ways in which people live and how culture can change over time through cultural diffusion."
+          },
+          {
+            "code": "4.C.2.5",
+            "text": "Analyze how humans interact with their environments in order to meet their needs and wants.\nA. Explain how humans adapt to the physical environment (e.g., food, shelter, earning a living) by identifying historical and contemporary examples.\nB. Describe how humans modify the environment to meet their needs (e.g., clearing of forests, crop rotation and irrigation, conservation, extraction of fossil fuels, construction of housing additions and businesses).\nC. Identify major projects in which Americans have modified the environment for the development of regions (e.g., Mississippi River levees, Hoover Dam, Golden Gate Bridge, Colorado River Aqueduct, Trans-Alaska Pipeline, New York skyline).\nD. Identify ways in which economic activities can affect ecosystems (e.g., clearing forests,draining wetlands, diverting waterways) by examining present-day issues related to the use of resources and the importance of supporting human development while being responsible with resources."
+          }
+        ]
+      },
+      {
+        "id": "4.C.3",
+        "title": "Standard 3: Analyze how geography has impacted cultures and interactions during the early history of our nation.",
+        "substandards": [
+          {
+            "code": "4.C.3.1",
+            "text": "Examine the various American Indian cultures inhabiting the nation prior to European explorations.\nA. Explain that North America is the home to well-developed societies and cultures (e.g., Inuit, Puebloan, Mississippian, Haudenosaunee) who flourished prior to European arrival.\nB. Describe American Indian groups and compare cultural characteristics (e.g., use of natural resources, food, shelter, customs) according to the geographic location of their original homelands (e.g., Eastern Woodlands, Southeast, Great Plains, Southwest, Great Basin, California, Northwest Coast).\nC. Explain how museums, national parks, and heritage centers attempt to preserve American Indian cultural heritage (e.g., Mesa Verde, Cahokia Mounds, Chaco Canyon)."
+          },
+          {
+            "code": "4.C.3.2",
+            "text": "Summarize the goals and consequences of European expeditions of North America.\nA. Explain how Spain, France, and England were motivated to explore the continent by a desire to expand their wealth and culture, convert Native peoples to Christianity, acquire natural resources, and develop trade relations.\nB. Trace and describe the impact of significant European expeditions (e.g., England: Henry Hudson; France: Jacques Cartier; Portugal: Vasco da Gama; Spain: Christopher Columbus, Hernando de Soto, Ferdinand Magellan, Juan Ponce de León).\nC. Explain interactions between American Indians, Spanish explorations, French fur traders, and early European settlers, comparing different perspectives toward land ownership and use of resources.\nD. Evaluate the mutual benefits and consequences of the Columbian Exchange, including agriculture, trade, military alliances, technology, slavery, and disease resulting in the significant\ndecline of Native peoples."
+          }
+        ]
+      },
+      {
+        "id": "4.C.4",
+        "title": "Standard 4: Examine the United States of America’s economic system and its economic activities which support human development. Student learning will continue to describe the experiences and interactions of the early American settlers and Native peoples during the era of colonial development, American independence, and the creation of a new nation under the Constitution of the United States. Although the four strands of social studies: Civics, History, Geography, and Economics play an essential role in student learning, primary focus for fifth grade will emphasize United States history and civics in greater depth and analysis.",
+        "substandards": [
+          {
+            "code": "4.C.4.1",
+            "text": "Describe the features of a market economy and evaluate common benefits and tradeoffs.\nA. Define a market economic system, explaining how the United States of America’s market system encourages free enterprise, economic development, private property rights, and individual prosperity.\nB. Describe how production, distribution, and consumption of goods and services are economic decisions made by producers and consumers to satisfy their needs and wants.\nC. Compare the factors of production (e.g., labor, land, capital, entrepreneurship) and explain how they are used together to produce goods and services, as exemplified by contemporary American entrepreneurs."
+          },
+          {
+            "code": "4.C.4.2",
+            "text": "Describe how economic activities impact the nation’s economy.\nA. Identify the major economic activities in which people of each region work to satisfy their needs and wants (e.g., commercial agriculture, manufacturing, energy production, construction, and services such as healthcare and technology).\nB. Distinguish between renewable (e.g., water, soil, solar) and nonrenewable resources (e.g., fossil fuels: oil, natural gas, coal) and explain how they are used to produce goods and services, using examples from regional economies.\nC. Describe the relative location and importance of natural resources which support human development in each region (e.g., Mid-Continent oilfield, Appalachian and Rocky Mountain coal basins, Ogallala Aquifer, Imperial Valley, Outer Banks)."
+          },
+          {
+            "code": "4.C.4.3",
+            "text": "Describe the patterns and networks of economic interdependence among regions and the world.\nA. Explain how transportation routes connect economic regions and support economic growth (e.g., St. Lawrence Seaway, Transcontinental Railroad, Route 66, Interstate Highway System).\nB. Describe reasons why people and nations trade, providing examples of major imports and exports produced and consumed by Americans."
+          }
+        ]
+      }
+    ]
+  },
+  "Grade 5": {
+    "Practices": [
+      {
+        "id": "5.P.1",
+        "title": "Practice 1: Apply critical thinking skills to address authentic civic issues.",
+        "substandards": [
+          {
+            "code": "5.P.1.1",
+            "text": "Demonstrate an understanding of the virtue of civil discourse to analyze and address real-world problems.\nA. Explain how human experiences can shape a person’s point of view about civic issues.\nB. Use a range of democratic procedures to discuss and make decisions about real-world problems in the community, region, and nation.\nC. Explain challenges of the past and present and describe strategies used to address local, regional, or national problems."
+          },
+          {
+            "code": "5.P.1.2",
+            "text": "Develop practices which demonstrate an understanding that social studies involves the evaluation of evidence.\nA. Ask and examine essential questions that are important to others, as well as enduring across social studies topics.\nB. Compare points of agreement from reliable information used to answer supporting questions related to social studies content.\nC. Demonstrate critical thinking skills by frequently developing and answering various depth of knowledge questions.\nD. Reinforce understanding of social studies content through collaborative inquiries and the completion of authentic tasks and assessments."
+          }
+        ]
+      },
+      {
+        "id": "5.P.2",
+        "title": "Practice 2: Use interdisciplinary tools to acquire, apply, and evaluate content understanding of the four strands of social studies.",
+        "substandards": [
+          {
+            "code": "5.P.2.1",
+            "text": "Demonstrate an understanding of the principles of government, the benefits of democratic systems, and their responsibilities as citizens.\nA. Explain democratic principles in historic documents by identifying examples of civic virtues and principles at work in state and national settings.\nB. Explain the structure, responsibilities, and powers exercised by officials of the national government and describe ways informed citizens can and should participate.\nC. Examine the principles of the Constitution of the United States of America, including how laws are made in a democratic society and are used to protect individual rights."
+          },
+          {
+            "code": "5.P.2.2",
+            "text": "Develop skills which demonstrate an understanding of historical events and the people who shaped our history.\nA. Compare and analyze primary and secondary sources from the past and present, including the intended audience and author’s purpose.\nB. Compare perspectives of individuals and groups from different regions and experiences, including the past and present.\nC. Explain multiple causes and effects of events and developments of the past or present; create timelines to identify multiple causes and effects from given information."
+          },
+          {
+            "code": "5.P.2.3",
+            "text": "Demonstrate a mastery of geographic concepts and the use of geographic tools to understand the impact of geography on the past and present.\nA. Answer geographic questions by organizing geographic information from historical as well as contemporary perspectives.\nB. Analyze human and physical features of the nation by drawing conclusions and explaining spatial relationships of physical and human places from geographic representations.\nC. Explain how environmental factors affected historical events and continue to impact contemporary human activities."
+          },
+          {
+            "code": "5.P.2.4",
+            "text": "Identify the principles of economic systems and develop an understanding of the benefits of a market system in local, national, and global settings.\nA. Interpret and draw conclusions from economic data on charts and graphs.\nB. Explain how the concept of supply and demand operates in a market economy, using historical and contemporary examples.\nC. Analyze the importance of innovation and entrepreneurship in a market economy."
+          }
+        ]
+      },
+      {
+        "id": "5.P.3",
+        "title": "Practice 3: Engage in critical, active reading of primary and secondary sources related to social studies concepts.",
+        "substandards": [
+          {
+            "code": "5.P.3.1",
+            "text": "Comprehend, evaluate, and synthesize textual sources to acquire and refine knowledge in the social studies.\nA. Use information accurately from a text when explaining the text explicitly and when drawing inferences from the text.\nB. Use information from multiple print or digital sources (e.g., timelines, maps, graphs, political cartoons, images, artwork) to answer a question."
+          },
+          {
+            "code": "5.P.3.2",
+            "text": "Apply critical reading and thinking skills to interpret, evaluate, and respond to a variety of complex texts and perspectives.\nA. Determine an author’s purpose and draw conclusions to evaluate how well the author’s purpose was achieved.\nB. Distinguish fact from opinion in nonfiction text and investigate facts for accuracy.\nC. Engage in collaborative discussions about appropriate topics and texts, expressing ideas clearly to others in group and whole class settings."
+          }
+        ]
+      },
+      {
+        "id": "5.P.4",
+        "title": "Practice 4: Develop a variety of evidence-based written products designed for multiple purposes.",
+        "substandards": [
+          {
+            "code": "5.P.4.1",
+            "text": "Summarize and paraphrase, integrate evidence, and cite sources to create written products, research projects, and presentations for multiple purposes related to social studies content.\nA. Compose informative written products by introducing and developing a topic, supported by evidence (e.g. facts, examples, details) and maintaining an organized structure.\nB. Clearly state an opinion through written products, supported by examples, details, and reasoning."
+          },
+          {
+            "code": "5.P.4.2",
+            "text": "Engage in authentic research to acquire, refine, and share knowledge through written presentations and products.\nA. Formulate a viable research question related to expanding knowledge of social studies concepts.\nB. Organize information from research, quoting accurately from the source and avoiding plagiarism.\nC. Create presentations or products which summarize research findings from two or more sources."
+          }
+        ]
+      }
+    ],
+    "Content": [
+      {
+        "id": "5.C.1",
+        "title": "Standard 1: Examine and compare the Jamestown and Plymouth settlements as the foundations of American culture and society.",
+        "substandards": [
+          {
+            "code": "5.C.1.1",
+            "text": "Describe the region prior to English settlement as the home to established and self-governing Native societies representing multiple cultures and engaging in vast intertribal trade routes."
+          },
+          {
+            "code": "5.C.1.2",
+            "text": "Summarize the economic, political, and cultural reasons for European colonization of North America, including competition over the continent’s land and natural resources, the development of new trade relationships, and opportunities for religious freedom."
+          },
+          {
+            "code": "5.C.1.3",
+            "text": "Explain England’s goals for the settlement of Virginia, including attempts to stake claim on North America at Roanoke and to develop Jamestown as a profit venture for investors."
+          },
+          {
+            "code": "5.C.1.4",
+            "text": "Explain the personal, economic, and political forces driving labor migration to Virginia, including immigration, indentured servitude, and the enslavement of Africans."
+          },
+          {
+            "code": "5.C.1.5",
+            "text": "Analyze the early successes and challenges of Jamestown, by explaining the\nA. leadership and diplomacy of Captain John Smith\nB. challenges of the Starving Time and the value of Powhatan trade to sustain the colony\nC. export of natural resources and John Rolfe’s development of tobacco as a cash crop\nD. deteriorating relationships with the Powhatan, characterized by differing views on land ownership."
+          },
+          {
+            "code": "5.C.1.6",
+            "text": "Explain the English commitment to the permanent settlement at Jamestown as evidenced through an elected representative government (House of Burgesses), private ownership of land, and the recruitment of women and families."
+          },
+          {
+            "code": "5.C.1.7",
+            "text": "Describe the importance of freedom from religious persecution that motivated immigration by Pilgrims (separatists) to Plymouth Colony as opposed to economic reasons that motivated other colonists."
+          },
+          {
+            "code": "5.C.1.8",
+            "text": "Explain the early successes and challenges for Pilgrims of the Plymouth settlement including the\nA. adaptation to an unfamiliar and harsh environment\nB. practice of self-government established by the Mayflower Compact\nC. leadership of William Bradford."
+          },
+          {
+            "code": "5.C.1.9",
+            "text": "Explain the founding and development of the Massachusetts Bay Colony, including\nA. a stable government influenced by Puritan religious beliefs\nB. self-government through town meetings\nC. governors elected by freemen\nD. protection of individual rights established in the Massachusetts Body of Liberties.\nE. leadership of John Winthrop and his vision of a “city upon a hill.”"
+          },
+          {
+            "code": "5.C.1.10",
+            "text": "Describe the contact and exchange between colonists and Native peoples by explaining\nA. how American Indian knowledge of the environment, agricultural practices (e.g., three sisters), and hunting skills contributed to the sustenance of colonial settlements\nB. early alliances with the Wampanoag under the leadership of Ousamequin (Massasoit) and the importance of Tisquantum (Squanto) to Plymouth’s survival\nC. how contact between cultures led at times to misunderstandings and conflict."
+          }
+        ]
+      },
+      {
+        "id": "5.C.2",
+        "title": "Standard 2: Compare the developments of the New England Colonies, the Middle Colonies, and the Southern Colonies.",
+        "substandards": [
+          {
+            "code": "5.C.2.1",
+            "text": "Explain how settlements in other colonies were influenced by a desire for religious freedom, economic opportunity, and self-government, including\nA. Roger Williams’ advocacy for religious freedom and his founding of the Providence Plantation\nB. Anne Hutchinson’s opposition to Puritan restrictions on religious freedom\nC  William Penn’s establishment of a haven for Quakers and diverse faiths in Pennsylvania\nD. Thomas Hooker’s influence in formulating the Fundamental Orders of Connecticut\nE. George Calvert’s (First Baron of Baltimore) creation of a refuge for persecuted Catholics in Maryland\nF. James Oglethorpe’s recruitment of England’s impoverished and religious minorities to Georgia."
+          },
+          {
+            "code": "5.C.2.2",
+            "text": "Compare the economic development of the three colonial regions including\nA. agricultural exports as affected by climate, physical features, and natural resources\nB. a labor system utilizing indentured servants in various occupations\nC. a growing reliance on enslaved labor considered essential to the plantation system."
+          },
+          {
+            "code": "5.C.2.3",
+            "text": "Explain the economic and cultural interactions resulting from the triangular trade routes, including the forced migration of Africans through the Transatlantic slave trade and experiences of the Middle Passage."
+          },
+          {
+            "code": "5.C.2.4",
+            "text": "Analyze the forms of self-government in the colonies.\nA. Explain how English traditions of limited government (Parliament’s relationship to the monarchy) and ethical traditions reflected in colonial covenants and political writings which shaped the colonial experience in self-government.\nB. Describe how representative government was established through various institutions (e.g., New England town hall meetings, colonial legislatures, colonial charters).\nC. Examine early discussions on intercolonial cooperation exemplified by the Albany Plan of Union and Benjamin Franklin's “Join or Die” political cartoon.\nD. Evaluate the influence of the Haudenosaunee (Iroquois) Confederacy on colonial attempts to unite."
+          },
+          {
+            "code": "5.C.2.5",
+            "text": "Analyze the evolving relationship between American Indians and the British colonists by describing how\nA. although colonists and American Indians benefited from trade, disputes erupted over territorial claims.\nB. armed conflicts devastated both British settlements and Tribal communities."
+          },
+          {
+            "code": "5.C.2.6",
+            "text": "Compare the experiences of both free and enslaved persons in the British colonies, including resistance efforts by enslaved peoples and attempts to preserve aspects of African culture."
+          }
+        ]
+      },
+      {
+        "id": "5.C.3",
+        "title": "Standard 3: Analyze the series of events and policies which led colonists to seek and declare independence.",
+        "substandards": [
+          {
+            "code": "5.C.3.1",
+            "text": "Analyze how growing political and economic tensions led to dissent among colonists by explaining\nA. the enforcement of trade restrictions and tax collection by England in response to its debt from the French and Indian War.\nB. resentment over the Proclamation of 1763 and its restriction of western settlement."
+          },
+          {
+            "code": "5.C.3.2",
+            "text": "Identify the primary cause of the American Revolution as a colonial struggle for self-rule.\nA. Describe the impact of the Stamp Act and Quartering Act which prompted formation of the Stamp Act Congress.\nB. Compare different strategies used to challenge British policies, including the use of propaganda and the boycott of British imports.\nC. Explain how the enactment of the Townshend Duties and the Tea Act led to escalated tensions, such as the Boston Massacre and the Boston Tea Party.\nD. Describe how the passage of the Intolerable Acts (Coercive Acts) prompted the colonists to unite at the First Continental Congress."
+          },
+          {
+            "code": "5.C.3.3",
+            "text": "Explain efforts to mobilize support for the American Revolution.\nA. Compare the role of the Sons of Liberty, the Committees of Correspondence, and the Minutemen.\nB. Describe how the British raids and armed encounters at Lexington and Concord became catalysts for the revolution.\nC. Explain how Thomas Paine’s Common Sense shifted American sentiment toward independence.\nD. Describe the significance of the rallying cry, “no taxation without representation.”"
+          },
+          {
+            "code": "5.C.3.4",
+            "text": "Explain the meaning of the key ideals expressed in the Declaration of Independence, drafted by Thomas Jefferson and the Committee of Five, adopted July 4, 1776, including\nA. natural, unalienable rights, such as life, liberty, and the pursuit of happiness\nB. the equality of all individuals\nC. the purpose of government\nD. the principle of self-rule by consent of the governed\nE. specific colonial grievances and rights as British citizens."
+          }
+        ]
+      },
+      {
+        "id": "5.C.4",
+        "title": "Standard 4: Examine the struggles of the Revolutionary War and ultimate victory to gain independence.",
+        "substandards": [
+          {
+            "code": "5.C.4.1",
+            "text": "Explain how the colonists were divided toward the growing call for independence by identifying various points of view and motivations, including patriots, loyalists, American Indian Nations, women, and enslaved persons."
+          },
+          {
+            "code": "5.C.4.2",
+            "text": "Compare the advantages and disadvantages of the British and the American colonies during the Revolutionary War, including military leadership and strength, population, resources, and foreign alliances."
+          },
+          {
+            "code": "5.C.4.3",
+            "text": "Examine the first United States of America centralized system of government under the Continental Congress and established by the Articles of Confederation.\nA. Identify the Articles of Confederation as a loose alliance of states.\nB. Explain the importance of the Articles of Confederation to wage a war and conduct foreign diplomacy."
+          },
+          {
+            "code": "5.C.4.4",
+            "text": "Analyze the relationships of significant military and diplomatic events of the Revolutionary War.\nA. Explain how the Battle of Bunker Hill, although a Patriot loss, confirmed colonial commitment to the patriot cause.\nB. Describe the Continental Army’s victory at Trenton, exemplified by Washington’s military leadership against professional British and Hessian troops.\nC. Explain that the Battles of Saratoga are considered a turning point with regards to securing French support for the revolution.\nD. Describe the harsh conditions at the Valley Forge Encampment and how Washington’s leadership created a cohesive, disciplined fighting force.\nE. Explain the significance of Thomas Paine’s The Crisis in bolstering patriot morale among the public and the military.\nF. Describe how the support of the French army and navy helped Americans defeat Lord Cornwallis at Yorktown.\nG. Summarize the significance of the Treaty of Paris (1783) on the United States of America’s status as a free nation."
+          },
+          {
+            "code": "5.C.4.5",
+            "text": "Identify the contributions of key individuals influential to the American Revolution in the fields of\nA. patriot leadership (e.g., Samuel Adams, Benjamin Rush, Paul Revere)\nB. politics and diplomacy (e.g., Patrick Henry, Benjamin Franklin, John Adams, Nancy Ward “Nanyehi”)\nC. military service (e.g., Nathan Hale, John Paul Jones, Daniel Morgan, Ethan Allen, Nathanael Greene, Benedict Arnold, Marquis de Lafayette)\nD. Native alliances (e.g., Stockbridge Indian regiment of Minutemen, Oneida scouts)\nE. ideological writing (e.g., Thomas Paine, Mercy Otis Warren, Phillis Wheatley)."
+          }
+        ]
+      },
+      {
+        "id": "5.C.5",
+        "title": "Standard 5: Examine the formation of the United States of America’s system of government following the American Revolution.",
+        "substandards": [
+          {
+            "code": "5.C.5.1",
+            "text": "Evaluate the major issues that led to the Constitutional Convention, including the public alarm raised from Shays’ Rebellion and challenges faced by a national government too weak to conduct its affairs."
+          },
+          {
+            "code": "5.C.5.2",
+            "text": "Identify the role of leaders of the Constitutional Convention, including its president George Washington and the influence of James Madison, known as the “Father of the Constitution.”"
+          },
+          {
+            "code": "5.C.5.3",
+            "text": "Read, discuss, and explain the Declaration of Independence and how it has shaped the United States of America. Explain the key debates and compromises of the Constitutional Convention, including\nA. the goals of a stronger union with respect to commerce and political stability\nB. state representation in Congress, presented by opposing Virginia and New Jersey Plans, and resolved by the Great Compromise, creating a bicameral legislature\nC. congressional representation resolved by the Three-Fifths Compromise and the potential for a future ban of the international slave trade."
+          },
+          {
+            "code": "5.C.5.4",
+            "text": "Describe the public debates over the Constitution’s ratification, comparing the viewpoints of the Federalists, led by James Madison and Alexander Hamilton, and Anti-Federalists, led by George Mason, regarding the powers of central government and the necessity for a national Bill of Rights."
+          }
+        ]
+      },
+      {
+        "id": "5.C.6",
+        "title": "Standard 6: Describe the structure and responsibilities of the United States of America’s system of government and the role of the individual citizen, as provided in the Constitution of the United States of America.",
+        "substandards": [
+          {
+            "code": "5.C.6.1",
+            "text": "Explain that the United States of America’s government was established through a written Constitution, establishing the supreme law of the land.\nA. Examine the Preamble of the Constitution of the United States of America and identify the major purposes of government.\nB. Explain how the people are the ultimate source of government power in a constitutional republic.."
+          },
+          {
+            "code": "5.C.6.2",
+            "text": "Summarize the rights and liberties protected by the Bill of Rights.\nA. Draw connections to colonial conditions which prompted the adoption of particular amendments.\nB. Identify contemporary examples of rights, liberties, and due process protections guaranteed by the Bill of Rights."
+          },
+          {
+            "code": "5.C.6.3",
+            "text": "Analyze the structure and operations of government established in the Constitution of the United States of America.\nA. Explain why the Framers separated government’s powers into different branches, identify the three branches of the United States of America’s government (legislative, executive, judicial), and describe each branch’s basic function.\nB. Describe the system of checks and balances, explaining how each branch of government can limit the power of other branches.\nC. Examine the system of shared powers (federalism) between the federal and state levels of governments, explaining why the Framers assigned specific powers to each level.\nD. Explain how the Constitution of the United States of America establishes a process for making laws, including specific roles for Congress, the President, and the Supreme Court."
+          },
+          {
+            "code": "5.C.6.4",
+            "text": "Analyze the historical development of American Indian Citizenship and constitutional rights in the United States of America, including the passage of the Indian Citizenship Act of 1924. Examine how Tribal sovereignty and United States of America citizenship function within the United States of America.\nA. Describe how the Commerce Clause of the Constitution establishes a nation-to-nation relationship between the United States of America and Tribal governments.\nB. Explain that Tribal governments possess powers, including the authority to determine Tribal citizenship, make and enforce laws, manage lands and natural resources, and provide for the needs of Tribal citizens."
+          },
+          {
+            "code": "5.C.6.5",
+            "text": "Analyze the role and responsibilities of all United States of America citizens by explaining\nA. why voting in public elections is necessary to maintain a constitutional republic\nB. how becoming informed voters contributes to wise decisions\nC. how citizens exchange ideas through peaceful protest and civil discourse\nD. that service on a trial jury promotes fair justice for all citizens\nE. why payment of taxes is required to support projects for the common good\nF. that safety and order rely on respect for authority and laws\nG. how registration for military service ensures the nation is prepared to defend itself."
+          }
+        ]
+      },
+      {
+        "id": "5.C.7",
+        "title": "Standard 7: Summarize the growth of a new nation under the leadership of Presidents Washington, Adams, and Jefferson. The four strands of social studies: Civics, History, Geography, and Economics continue to guide student learning in sixth grade as they are applied to an in-depth investigation of the geographic environment and cultures of the Western Hemisphere. Students will analyze the location of natural resources, their use in human development, the commonalities and differences between cultural groups, and how principles of democracy compare to other forms of government.",
+        "substandards": [
+          {
+            "code": "5.C.7.1",
+            "text": "Describe the presidential leadership of George Washington, including the\nA. creation of cabinet positions\nB. precedent of not seeking a third term\nC. read and discuss his Farewell Address."
+          },
+          {
+            "code": "5.C.7.2",
+            "text": "Identify the significant work of President John Adams, which\nA. ensured the new nation's ability to defend itself by strengthening the army and navy\nB. left a legacy of cautious foreign policy based on national interest."
+          },
+          {
+            "code": "5.C.7.3",
+            "text": "Explain the impact of President Thomas Jefferson’s presidency, including\nA. the purchase of Louisiana Territory and its effect on westward expansion\nB. geographic and scientific knowledge gained from the Meriwether Lewis and William Clark expedition\nC. efforts to enter and maintain treaties with American Indian Nations."
+          }
+        ]
+      }
+    ]
+  },
+  "Grade 6": {
+    "Practices": [
+      {
+        "id": "6.P.1",
+        "title": "Practice 1: Apply critical thinking skills to address authentic civic issues.",
+        "substandards": [
+          {
+            "code": "6.P.1.1",
+            "text": "Demonstrate an understanding of the virtue of civil discourse to analyze and address real-world problems.\nA. Analyze why the acknowledgement of different perspectives can contribute to civil discourse and solutions to civic issues.\nB. Apply a range of deliberative and democratic procedures to discuss, make decisions, and propose action about real-world problems in and out of school.\nC. Use information to analyze how a specific problem can manifest itself in regional and global issues, describing options for solutions."
+          },
+          {
+            "code": "6.P.1.2",
+            "text": "Develop practices which demonstrate an understanding that social studies involves the evaluation of evidence.\nA. Investigate and propose answers to essential questions representing complex enduring issues across the social studies disciplines.\nB. Answer supporting questions related to social studies content knowledge and make connections to different interpretations.\nC. Develop deeper critical thinking skills by questioning assumptions and identifying inconsistencies or errors in reasoning.\nD. Demonstrate understanding of social studies content through the development of self-driven inquiries and the completion of authentic tasks and assessments."
+          }
+        ]
+      },
+      {
+        "id": "6.P.2",
+        "title": "Practice 2: Use interdisciplinary tools to acquire, apply, and evaluate content understanding of the four strands of social studies.",
+        "substandards": [
+          {
+            "code": "6.P.2.1",
+            "text": "Demonstrate an understanding of the principles of government, the benefits of democratic systems, and their responsibilities as citizens.\nA. Compare and analyze civic virtues and democratic principles in historic and global settings, explaining how they influence political institutions.\nB. Compare the powers and responsibilities of the United States of America’s government to other forms of government, including the roles and rights of citizens.\nC. Examine the impact of constitutions, laws, treaties, and international agreements on the limits of government, including the concepts of sovereignty and the rule of law."
+          },
+          {
+            "code": "6.P.2.2",
+            "text": "Develop skills which demonstrate an understanding of historical events and the people who shaped our history.\nA. Gather and draw conclusions from sources of evidence, identifying plausible author, occasion, audience, purpose, and possible bias.\nB. Describe multiple factors and explain how they can influence the perspectives of individuals and groups on events from history and the modern era.\nC. Distinguish multiple causation, including immediate versus long-term cause-effect relationships; construct timelines of related events."
+          },
+          {
+            "code": "6.P.2.3",
+            "text": "Demonstrate a mastery of geographic concepts and the use of geographic tools to understand the impact of geography on the past and present.\nA. Answer geographic questions and conduct investigations by acquiring, organizing, and interpreting information about the modern world and historical events.\nB. Use multiple mapping techniques, data visuals, satellite images, and geographic technology to analyze spatial patterns of physical and human characteristics, making connections between regions.\nC. Explain how the environment affects cultural patterns and historical events, providing opportunities and challenges for human development."
+          },
+          {
+            "code": "6.P.2.4",
+            "text": "Identify the principles of economic systems and develop an understanding of the benefits of a market system in local, national, and global settings.\nA. Analyze, interpret, and compare economic data from multiple charts and graphs.\nB. Identify different types of economic systems, comparing advantages and disadvantages for citizens and the growth of a nation’s economy.\nC. Explain how technology and trade impact standard of living and economic interdependence, using historical or contemporary examples."
+          }
+        ]
+      },
+      {
+        "id": "6.P.3",
+        "title": "Practice 3: Engage in critical, active reading of primary and secondary sources related to social studies concepts.",
+        "substandards": [
+          {
+            "code": "6.P.3.1",
+            "text": "Comprehend, evaluate, and synthesize textual sources to acquire and refine knowledge in the social studies.\nA. Paraphrase the main idea and cite evidence from primary and secondary sources; provide an accurate summary of a source distinct from prior knowledge or opinion.\nB. Integrate the use of visual information (e.g., maps, charts, photographs, videos, political cartoons, artwork) with textual information from primary and secondary sources to draw conclusions."
+          },
+          {
+            "code": "6.P.3.2",
+            "text": "Apply critical reading and thinking skills to interpret, evaluate, and respond to a variety of complex texts and perspectives.\nA. Analyze works written on the same topic and compare methods the authors used to achieve similar or different purposes.\nB. Evaluate textual evidence to determine whether a claim is substantiated.\nC. Engage in collaborative discussions about information presented in social studies texts, expressing ideas clearly while building on the ideas of others."
+          }
+        ]
+      },
+      {
+        "id": "6.P.4",
+        "title": "Practice 4: Develop a variety of evidence-based written products designed for multiple purposes.",
+        "substandards": [
+          {
+            "code": "6.P.4.1",
+            "text": "Summarize and paraphrase, integrate evidence, and cite sources to create written products, research projects, and presentations for multiple purposes related to social studies content.\nA. Compose informative essays and other written products using and citing evidence (e.g., facts, examples, details) from multiple sources and maintaining an organized structure.\nB. Compose argumentative written products by introducing a claim, recognizing an opposing viewpoint, and organizing evidence and reasoning from credible sources."
+          },
+          {
+            "code": "6.P.4.2",
+            "text": "Engage in authentic research to acquire, refine, and share knowledge through written presentations and products.\nA. Refine and formulate viable research questions related to social studies investigations, using well-developed theses or claims.\nB. Quote, paraphrase, and summarize findings, avoiding plagiarism.\nC. Organize and create presentations or products using research from a variety of formats and encompassing different points of view."
+          }
+        ]
+      }
+    ],
+    "Content": [
+      {
+        "id": "6.C.1",
+        "title": "Standard 1: Analyze data from a geographic perspective using the skills and tools of geography.",
+        "substandards": [
+          {
+            "code": "6.C.1.1",
+            "text": "Describe geography as a field of inquiry which answers “the why of where” by examining both physical and human geography using spatial thinking skills."
+          },
+          {
+            "code": "6.C.1.2",
+            "text": "Integrate visual information to organize understandings about the people and environments of the Western Hemisphere.\nA. Apply the concepts of scale, distance, and direction to explain the relative location of physical and human places using maps and globes; explain how various map projections are distorted.\nB. Use the system of latitude and longitude to identify the absolute location of a place on maps and globes.\nC. Use different types of maps, graphs, charts, and geographic tools, such as satellite imagery and Geographic Information System (GIS) technology to draw conclusions and make predictions from geographic data."
+          },
+          {
+            "code": "6.C.1.3",
+            "text": "Compare characteristics of major regions of the Western Hemisphere through the regular use of strategies, such as the Five Themes of Geography (location, place, human-environment-interaction, movement, regions) which utilize critical thinking about geographic concepts."
+          },
+          {
+            "code": "6.C.1.4",
+            "text": "Describe and analyze the role of geographic factors on events that impact the people and places of the Western Hemisphere, using both primary and secondary sources."
+          }
+        ]
+      },
+      {
+        "id": "6.C.2",
+        "title": "Standard 2: Analyze the physical systems of the major regions of the Western Hemisphere.",
+        "substandards": [
+          {
+            "code": "6.C.2.1",
+            "text": "Identify and describe on a physical map the major landforms and bodies of water important to the development of each region of the Western Hemisphere."
+          },
+          {
+            "code": "6.C.2.2",
+            "text": "Use visual information to describe on a physical map the major climate and vegetation zones, drawing conclusions about their impact on human development."
+          },
+          {
+            "code": "6.C.2.3",
+            "text": "Explain how the factors of latitude, elevation, and proximity to bodies of water influence climate and human activities."
+          },
+          {
+            "code": "6.C.2.4",
+            "text": "Describe the distribution of natural resources found in each region, delineating between renewable and nonrenewable resources, and explaining how the relative location to such resources can influence the economic development of a region."
+          }
+        ]
+      },
+      {
+        "id": "6.C.3",
+        "title": "Standard 3: Identify the characteristics, distribution, and demographic patterns of human populations and systems of the Western Hemisphere.",
+        "substandards": [
+          {
+            "code": "6.C.3.1",
+            "text": "Identify on a political map the major countries and population centers of each region, describing urban, rural, suburban, and metropolitan settlement patterns."
+          },
+          {
+            "code": "6.C.3.2",
+            "text": "Analyze how the characteristics of culture impact people and places.\nA. Identify and describe cultural traits (e.g., language, ethnic heritage, religion, traditions, the arts) which are unique to a people and region.\nB. Explain how culture provides individuals with a sense of identity and how it is transferred from one generation to the next.\nC. Compare major cultural groups of the Western Hemisphere (e.g., American Indian, Indigenous peoples of Canada and Amazonia, French-speaking Canadians, Hispanic Latin America)."
+          },
+          {
+            "code": "6.C.3.3",
+            "text": "Define cultural diffusion by describing how cultural characteristics spread and impact contemporary regions (e.g., entertainment, fast foods, social media’s rapid spread of ideas, wide use of the smartphone)."
+          },
+          {
+            "code": "6.C.3.4",
+            "text": "Examine the impact of geography on migration and population distribution.\nA. Define push factors of migration (e.g., instability, conflict, natural disasters) using historic or contemporary examples (e.g., European colonization, political or religious asylum seekers).\nB. Identify and provide examples of pull factors of migration (e.g., economic opportunity, religious freedom, family ties, education)."
+          },
+          {
+            "code": "6.C.3.5",
+            "text": "Describe the ethnic heritage of Indigenous cultures of the Western Hemisphere.\nA. Explain that various complex societies, economic, and political systems developed on the North and South American continents, each known for unique achievements and contributions prior to the arrival of Europeans.\nB. Compare the cultures of Native peoples of the United States of America and Canada (e.g., Ancestral Puebloan, Mississippian, First Nations, Inuit, Metis).\nC. Explain how the Olmec and Maya adapted to and modified their environment to develop advanced civilizations in Mesoamerica, featuring advancements in science, architecture, the development of a writing system, and regional trade.\nD. Describe how the Aztec conquest of other Indigenous peoples created extensive trade networks and wealth.\nE. Explain how the Inca were able to control an expansive empire in the Andes, developing a strong central government and innovations in agriculture."
+          },
+          {
+            "code": "6.C.3.6",
+            "text": "Describe the cultural interactions between American Indian cultures and European settlers which impacted the heritage and history of major regions of the Western Hemisphere.\nA. Identify examples of cultural diffusion (e.g., Columbian Exchange: availability of new commodities and technology; assimilation of American Indian into colonial societies).\nB. Describe the impact of English and French settlement of North America on cultural characteristics such as language, customs, and principles of self-government.\nC. Examine Spanish colonialism of Latin America and its influence on language, religion, and customs, including the practices of privateering and mercantilism.\nD. Explain the effects of plantation agriculture and the importation of enslaved labor on the economic development and cultural heritage of regions.\nE. Identify the major regions of the Western Hemisphere that received enslaved Africans and explain how European imperial expansion, colonial labor demands, and Atlantic trade networks produced the\ntrans-Atlantic slave trade."
+          }
+        ]
+      },
+      {
+        "id": "6.C.4",
+        "title": "Standard 4: Analyze the interactions of humans and their environment in the Western Hemisphere.",
+        "substandards": [
+          {
+            "code": "6.C.4.1",
+            "text": "Explain how humans adapt to the environment (e.g., types and location of housing, clothing and food choices, methods of transportation, and options for economic activities) using historic and contemporary examples."
+          },
+          {
+            "code": "6.C.4.2",
+            "text": "Analyze the impact of natural disasters on human populations, including displacement, scarcity of consumer goods, economic activities, and loss of life."
+          },
+          {
+            "code": "6.C.4.3",
+            "text": "Describe how humans modify the natural environment to support human development, such as subsistence and commercial agriculture, extraction of fossil fuels and minerals, development of industry, and urbanization."
+          },
+          {
+            "code": "6.C.4.4",
+            "text": "Identify environmental challenges (e.g., air pollution, acid rain, deforestation) and explain how they can impact a region (e.g., oil spills, Amazonia’s ranching and logging operations, Mexico City’s urban sprawl)."
+          },
+          {
+            "code": "6.C.4.5",
+            "text": "Evaluate the need to preserve resources, climate, and wildlife by creating public awareness, including the efforts of eco-tourism."
+          },
+          {
+            "code": "6.C.4.6",
+            "text": "Describe the role of citizens as responsible stewards of natural resources and the environment (e.g., recycling campaigns, water conservation, national parks, protection of wildlife preserves)."
+          }
+        ]
+      },
+      {
+        "id": "6.C.5",
+        "title": "Standard 5: Analyze why and how humans develop rules, laws, and governments, including the role of citizens in government.",
+        "substandards": [
+          {
+            "code": "6.C.5.1",
+            "text": "Compare systems of governments.\nA. Define and describe the characteristics of limited governments (constitutional republic, constitutional monarchy) and authoritarian systems (dictatorship, oligarchy, absolute monarchy).\nB. Compare different forms of constitutional republics, exemplified by the constitutional republic of the United States of America and the constitutional monarchy of Canada.\nC. Analyze the historical development of American Indian citizenship and constitutional rights in the United States of America, including the passage of the Indian Citizenship Act of 1924. Examine how tribal sovereignty and United States of America citizenship function within the United States of America. Compare the rights and responsibilities of tribal citizenship with those of state and national citizenship, including the role of laws such as the Indian Civil Rights Act of 1968.\nD. Describe how historic struggles for independence in Latin America and the Caribbean were influenced by the American revolution and Constitution, leading to the creation of modern republics.\nE. Describe challenges for several Latin American governments and economies, due to a history of political and economic instability."
+          },
+          {
+            "code": "6.C.5.2",
+            "text": "Compare common features of the Constitution of the United States of America to other representative governments of the Western Hemisphere, focusing on the principles of limited government, individual rights and liberties, and the role of the citizen in the selection of government officials."
+          }
+        ]
+      },
+      {
+        "id": "6.C.6",
+        "title": "Standard 6: Analyze economic systems of the world and how they impact the development of a nation and region.",
+        "substandards": [
+          {
+            "code": "6.C.6.1",
+            "text": "Explain how people organize economic systems to address basic economic questions regarding which goods and services will be produced, how they will be distributed, and who will consume them."
+          },
+          {
+            "code": "6.C.6.2",
+            "text": "Analyze the benefits and limitations of the world’s economic systems.\nA. Define the characteristics of traditional, market, and command economic systems.\nB. Describe how government policies affect economic activities within a nation, as well as determine trade relationships.\nC. Compare the outcomes of different economic systems for human prosperity, equality, and freedom."
+          },
+          {
+            "code": "6.C.6.3",
+            "text": "Explain how different sectors of a nation’s economy contribute to the development of a nation.\nA. Primary Sector: Extraction and harvesting of natural products (e.g., Venezuela’s Orinoco Belt, Chile’s artisanal fishing, logging of Canada’s boreal forests).\nB. Secondary Sector: Production of goods through manufacturing and construction (e.g., United States of America's steel industry, Argentina’s meat-processing, Mexico’s automotive exports).\nC. Tertiary Sector: Businesses that provide services to consumers (e.g., Costa Rica's ecotourism, New York Stock Exchange, Houston’s MD Anderson Cancer Center).\nD. Quaternary Sector: Research and intellectual services such as technological advancement and innovation (e.g., Silicon Valley and Sao Paulo’s technology centers, Massachusetts Institute of Technology)."
+          },
+          {
+            "code": "6.C.6.4",
+            "text": "Identify and compare the characteristics of developed and developing countries by analyzing data (e.g., literacy rate, life expectancy, per capita income, and infant mortality) used by geographers to measure development."
+          }
+        ]
+      },
+      {
+        "id": "6.C.7",
+        "title": "Standard 7: Analyze the common characteristics of regions which create a sense of identity and unity, influencing the interactions among people and nations of the Western Hemisphere.",
+        "substandards": [
+          {
+            "code": "6.C.7.1",
+            "text": "Define the concept of region as an area sharing common characteristics and explain how regions can be categorized in many ways, such as political, physical, cultural, and economic."
+          },
+          {
+            "code": "6.C.7.2",
+            "text": "Identify examples of physical regions sharing common features of landforms, climate, vegetation, and natural resources (e.g., Great Plains, New England, Amazonia, Canadian Shield, Altiplano, sun belt, tornado alley)."
+          },
+          {
+            "code": "6.C.7.3",
+            "text": "Identify examples of man-made regions sharing common characteristics related to culture, human settlement, history, economic activities, and governments (e.g., Latin America, corn belt, Northeast megalopolis, Silicon Valley, British Commonwealth, barrio, suburb)."
+          },
+          {
+            "code": "6.C.7.4",
+            "text": "Describe patterns of economic interdependence and trade linking regions of the Western Hemisphere.\nA. Define basic concepts related to trade, including exports and imports, tariffs, free trade, and balance of trade.\nB. Explain economic interdependence as it relates to the outsourcing of jobs to developing regions."
+          },
+          {
+            "code": "6.C.7.5",
+            "text": "Explain reasons for cooperation among nations of the Western Hemisphere.\nA. Describe how the people of different regions cooperate to address common concerns and how such cooperation impacts global interdependence (e.g., the United States-Mexico-Canada Agreement, Mercosur).\nB. Examine how supranational organizations (e.g., Organization of American States, Arctic Council) create cooperative political, economic, defense, and cultural regions."
+          },
+          {
+            "code": "6.C.7.6",
+            "text": "Explain reasons for conflict between regions of the Western Hemisphere, such as territorial disputes, access to natural resources, and ethnic differences (e.g., boundary and mineral claims of the Arctic, Indigenous sovereignty over oil and gas reserves in Bolivia, immigration across the United States of America\n-Mexico border)."
+          }
+        ]
+      }
+    ]
+  },
+  "Grade 7": {
+    "Practices": [
+      {
+        "id": "7.P.1",
+        "title": "Practice 1: Apply critical thinking skills to address authentic civic issues.",
+        "substandards": [
+          {
+            "code": "7.P.1.1",
+            "text": "Demonstrate an understanding of the virtue of civil discourse to analyze and address real-world problems.\nA. Analyze why the acknowledgement of different perspectives can contribute to civil discourse and solutions to civic issues.\nB. Apply a range of deliberative and democratic procedures to discuss, make decisions, and propose action about real-world problems in and out of school.\nC. Use information to analyze how a specific problem can manifest itself in regional and global issues, describing options for solutions."
+          },
+          {
+            "code": "7.P.1.2",
+            "text": "Develop practices which demonstrate an understanding that social studies involves the evaluation of evidence.\nA. Investigate and propose answers to essential questions representing complex enduring issues across the social studies disciplines.\nB. Answer supporting questions related to social studies content knowledge and make connections to different interpretations.\nC. Develop deeper critical thinking skills by questioning assumptions and identifying inconsistencies or errors in reasoning.\nD. Demonstrate understanding of social studies content through the development of self-driven inquiries and the completion of authentic tasks and assessments."
+          }
+        ]
+      },
+      {
+        "id": "7.P.2",
+        "title": "Practice 2: Use interdisciplinary tools to acquire, apply, and evaluate content understanding of the four strands of social studies.",
+        "substandards": [
+          {
+            "code": "7.P.2.1",
+            "text": "Demonstrate an understanding of the principles of government, the benefits of democratic systems, and their responsibilities as citizens.\nA. Compare and analyze civic virtues and democratic principles in historic and global settings, explaining how they influence political institutions.\nB. Compare the powers and responsibilities of the United States of America’s government to other forms of government, including the roles and rights of citizens.\nC. Examine the impact of constitutions, laws, treaties, and international agreements on the limits of government, including the concepts of sovereignty and the rule of law."
+          },
+          {
+            "code": "7.P.2.2",
+            "text": "Develop skills which demonstrate an understanding of historical events and the people who shaped our history.\nA. Gather and draw conclusions from sources of evidence, identifying plausible author, occasion, audience, purpose, and possible bias.\nB. Describe multiple factors and explain how they can influence the perspectives of individuals and groups on events from history and the modern era.\nC. Distinguish multiple causation, including immediate versus long-term cause-effect relationships; construct timelines of related events."
+          },
+          {
+            "code": "7.P.2.3",
+            "text": "Demonstrate a mastery of geographic concepts and the use of geographic tools to understand the impact of geography on the past and present.\nA. Answer geographic questions and conduct investigations by acquiring, organizing, and interpreting information about the modern world and historical events.\nB. Use multiple mapping techniques, data visuals, satellite images, and geographic technology to analyze spatial patterns of physical and human characteristics, making connections between regions.\nC. Explain how the environment affects cultural patterns and historical events, providing opportunities and challenges for human development."
+          },
+          {
+            "code": "7.P.2.4",
+            "text": "Identify the principles of economic systems and develop an understanding of the benefits of a market system in local, national, and global settings.\nA. Analyze, interpret, and compare economic data from multiple charts and graphs.\nB. Identify different types of economic systems, comparing advantages and disadvantages for citizens and the growth of a nation’s economy.\nC. Explain how technology and trade impact standard of living and economic interdependence, using historical or contemporary examples."
+          }
+        ]
+      },
+      {
+        "id": "7.P.3",
+        "title": "Practice 3: Engage in critical, active reading of primary and secondary sources related to social studies concepts.",
+        "substandards": [
+          {
+            "code": "7.P.3.1",
+            "text": "Comprehend, evaluate, and synthesize textual sources to acquire and refine knowledge in the social studies.\nA. Paraphrase the main idea and cite evidence from primary and secondary sources; provide an accurate summary of a source distinct from prior knowledge or opinion.\nB. Integrate the use of visual information (e.g., maps, charts, photographs, videos, political cartoons, artwork) with textual information from primary and secondary sources to draw conclusions."
+          },
+          {
+            "code": "7.P.3.2",
+            "text": "Apply critical reading and thinking skills to interpret, evaluate, and respond to a variety of complex texts and perspectives.\nA. Analyze works written on the same topic and compare methods the authors use to achieve similar or different purposes.\nB. Evaluate textual evidence to determine whether a claim is substantiated.\nC. Engage in collaborative discussions about information presented in social studies texts, expressing ideas clearly while building on the ideas of others."
+          }
+        ]
+      },
+      {
+        "id": "7.P.4",
+        "title": "Practice 4: Develop a variety of evidence-based written products designed for multiple purposes.",
+        "substandards": [
+          {
+            "code": "7.P.4.1",
+            "text": "Summarize and paraphrase, integrate evidence, and cite sources to create written products, research projects, and presentations for multiple purposes related to social studies content.\nA. Compose informative essays and other written products using and citing evidence (e.g. facts, examples, details) from multiple sources and maintaining an organized structure.\nB. Compose argumentative written products by introducing a claim, recognizing an opposing viewpoint, and organizing evidence and reasoning from credible sources."
+          },
+          {
+            "code": "7.P.4.2",
+            "text": "Engage in authentic research to acquire, refine, and share knowledge through written presentations and products.\nA. Refine and formulate viable research questions related to social studies investigations, using well-developed theses or claims.\nB. Quote, paraphrase, and summarize findings, avoiding plagiarism.\nC. Organize and create presentations or products using research from a variety of formats and encompassing different points of view."
+          }
+        ]
+      }
+    ],
+    "Content": [
+      {
+        "id": "7.C.1",
+        "title": "Standard 1: Analyze data from a geographic perspective using the skills and tools of geography.",
+        "substandards": [
+          {
+            "code": "7.C.1.1",
+            "text": "Describe the role of geographic factors on events, explaining the importance of a spatial perspective and the integration of specific geographic information supported by analysis of primary and secondary sources."
+          },
+          {
+            "code": "7.C.1.2",
+            "text": "Reinforce geographic skills through the routine practice and use of geographic tools (e.g., thematic maps, graphs, charts, satellite imagery, GIS technologies) in order to draw conclusions and make predictions from geographic data."
+          }
+        ]
+      },
+      {
+        "id": "7.C.2",
+        "title": "Standard 2: Analyze the physical systems of the major regions of the Eastern Hemisphere.",
+        "substandards": [
+          {
+            "code": "7.C.2.1",
+            "text": "Identify on a physical map the major landforms and bodies of water of each region and compare climatic conditions, vegetation, and biomes using thematic maps and other geographic tools."
+          },
+          {
+            "code": "7.C.2.2",
+            "text": "Describe how the physical environment can influence human population distribution, population growth, settlement patterns, land use, and economic activities."
+          },
+          {
+            "code": "7.C.2.3",
+            "text": "Compare the characteristics and distribution of major renewable and nonrenewable resources of each region, identifying major nations in which natural resources (e.g., fossil fuels, minerals, agricultural crops) are the primary source of economic activities."
+          },
+          {
+            "code": "7.C.2.4",
+            "text": "Identify examples of scarcity and how the availability of natural resources impacts regional economies, potentially leading to both conflict and cooperation."
+          }
+        ]
+      },
+      {
+        "id": "7.C.3",
+        "title": "Standard 3: Identify the distribution and demographic patterns of human populations of the Eastern Hemisphere.",
+        "substandards": [
+          {
+            "code": "7.C.3.1",
+            "text": "Identify on a political map the major countries and population centers of each region, describing urban, rural, suburban, and metropolitan settlement patterns."
+          },
+          {
+            "code": "7.C.3.2",
+            "text": "Explain the impact of geography on population distribution, density, growth, change, settlement patterns, the availability of resources, and migration."
+          },
+          {
+            "code": "7.C.3.3",
+            "text": "Describe the challenges of urbanization and urban sprawl (e.g., access to public services, affordability of housing, gentrification, pollution, transportation)."
+          },
+          {
+            "code": "7.C.3.4",
+            "text": "Examine how nations address population changes through government policies (e.g., education, health care, immigration)."
+          },
+          {
+            "code": "7.C.3.5",
+            "text": "Describe the reasons for emigration and immigration.\nA. Examine the role of pull factors (e.g., economic opportunity, education, family) and the role of push factors (e.g., political unrest, religious persecution, war, famine, natural disasters) which motivate both emigration and immigration, differentiating between involuntary and voluntary migration.\nB. Describe contemporary reasons and examples of migration (e.g., drought in agricultural eastern Africa resulting in urbanization, overpopulation of India’s cities due to employment options in high-tech industries)."
+          }
+        ]
+      },
+      {
+        "id": "7.C.4",
+        "title": "Standard 4: Analyze the interactions of humans and their environment.",
+        "substandards": [
+          {
+            "code": "7.C.4.1",
+            "text": "Analyze how humans adapt to their environment, including the impact of climate and weather patterns and natural disasters on human populations, resulting in displacement, scarcity of consumer goods, and loss of life."
+          },
+          {
+            "code": "7.C.4.2",
+            "text": "Describe how humans adapt to and modify their environment for the purpose of food production.\nA. Describe the differences among subsistence, cash crop, and commercial agriculture, including their impact on the economic development of a region.\nB. Explain how agricultural innovations, such as the Green Revolution and modern irrigation systems, increase food production in developing countries.\nC. Examine how agricultural practices in a region imprint the physical environment (e.g., desertification of the Aral Sea, terraced construction for rice farming, modern irrigation methods utilized in the Arabian Peninsula)."
+          },
+          {
+            "code": "7.C.4.3",
+            "text": "Evaluate the effects of human modification of the natural environment through processes related to industrialization.\nA. Explain why places become major hubs of industrial activity by analyzing the relationship between the location of natural resources to various manufacturing industries.\nB. Describe the importance of transportation infrastructure and its direct impact on people's access to resources and consumer goods.\nC. Examine how the development of technology meets energy demands, as well as modifies the environment (e.g., extraction of raw materials, offshore drilling, nuclear power plants, water diversion, hydroelectric power plants)."
+          }
+        ]
+      },
+      {
+        "id": "7.C.5",
+        "title": "Standard 5: Evaluate the development and impact of culture on the major regions and peoples of the Eastern Hemisphere.",
+        "substandards": [
+          {
+            "code": "7.C.5.1",
+            "text": "Compare cultural traits of major cultural regions and explain how culture can change over time through the process of cultural diffusion."
+          },
+          {
+            "code": "7.C.5.2",
+            "text": "Define and describe the legacy of the world’s major cultural hearths on a region’s ethnic heritage and history.\nA. Examine how and why major cultural hearths developed along major river valleys and crossroads of trade (e.g., Mesopotamia's Fertile Crescent; the Nile, Indus, Huang He and Yangtze River Valleys; the kingdoms of Ghana, Mali, and Songhai).\nB. Explain that complex societies and civilizations in different regions share common characteristics (e.g., agricultural innovations, written language, and early systems of law and government)."
+          },
+          {
+            "code": "7.C.5.3",
+            "text": "Examine the dominant religions of the world, including Chrisitanity, Judaism, Islam, Hinduism, and Buddhism. Examine how major belief systems influence societies and governments, including through use of sacred texts, basic tenets, and central features."
+          }
+        ]
+      },
+      {
+        "id": "7.C.6",
+        "title": "Standard 6: Analyze systems of government by examining their source of authority, principles, structures, and processes.",
+        "substandards": [
+          {
+            "code": "7.C.6.1",
+            "text": "Compare the source of authority and power of representative governments (republic, constitutional monarchy) versus authoritarian systems (dictatorship, absolute monarchy, totalitarian regime, oligarchy, theocracy) using contemporary or historical examples (e.g., the symbolic role of the British crown versus the authority of Saudi Arabia’s monarchy, the republics of western Europe to the Chinese Communist system)."
+          },
+          {
+            "code": "7.C.6.2",
+            "text": "Trace the historic roots of constitutional republics.\nA.  Explain why the government of ancient Athens is considered the beginning of democratic government and examine Greek political concepts, including the “polis” or city-state, rule of law, liberty, civic participation and voting rights, legislative bodies, and written constitutions.\nB.  Describe the government of the Roman Republic and its contribution to the development of representative self-government, including separation of powers, liberty, the rule of law, and the concept of civic duty.\nC.  Describe influences of early English tradition related to the principles of limited government and individual rights, such as found in the Magna Carta and established by the English Bill of Rights."
+          },
+          {
+            "code": "7.C.6.3",
+            "text": "Compare the role of the citizen in modern representative governments to authoritarian systems (e.g., United Kingdom to Russia; India to Saudi Arabia; South Africa to China; United States of America to Iran).\nA. Describe the involvement of citizens in the selection of government officials and the lawmaking process in different systems of government.\nB. Compare civil liberties in representative to authoritarian systems of government, referencing the United States of America’s Bill of Rights.\nC. Describe how contemporary authoritarian governments maintain power over citizens (e.g., denial of civil rights, illegitimate elections, restrictions on free speech and the free exercise of religion, refusal of\ndue process protections, corruption of government officials)."
+          },
+          {
+            "code": "7.C.6.4",
+            "text": "Analyze issues related to Indigenous sovereignty, including the management of natural resources and the preservation of Indigenous cultures (e.g., Scandinavia’s Saami, Rohingya of Myanmar, Uyghur of China, New Zealand’s Māori)."
+          }
+        ]
+      },
+      {
+        "id": "7.C.7",
+        "title": "Standard 7: Examine and compare economic systems as means by which governments organize and distribute available resources, services, and goods.",
+        "substandards": [
+          {
+            "code": "7.C.7.1",
+            "text": "Explain how people organize economic systems to address basic economic questions regarding which goods and services will be produced, how they will be distributed, and who will consume them."
+          },
+          {
+            "code": "7.C.7.2",
+            "text": "Compare the advantages and disadvantages of the traditional, market, and command economic systems, including how government policies affect economic activities and trade relationships among nations."
+          },
+          {
+            "code": "7.C.7.3",
+            "text": "Evaluate how the major sectors of economic activities contribute to the development of a country or region:\nA. Extraction and harvesting of natural products (Primary Sector);\nB. Production of goods through manufacturing and construction (Secondary Sector);\nC. Businesses that provide services to consumers (Tertiary Sector);\nD. Research and intellectual services such as technology and innovation (Quaternary Sector)."
+          },
+          {
+            "code": "7.C.7.4",
+            "text": "Compare the economic measurements of productivity which inform nations of their economic health and growth (e.g., Gross Domestic Product and Gross National Product)."
+          },
+          {
+            "code": "7.C.7.5",
+            "text": "Distinguish between developed and developing regions by analyzing data used by geographers (e.g., the Human Development Index data, literacy rate, life expectancy, infant mortality, per capita income),"
+          },
+          {
+            "code": "7.C.7.6",
+            "text": "Analyze the role of government to finance a nation’s development (e.g., infrastructure, social programs, and education)."
+          }
+        ]
+      },
+      {
+        "id": "7.C.8",
+        "title": "Standard 8: Analyze the physical and human characteristics of regions which create uniqueness and influence people’s perceptions of the Eastern Hemisphere.",
+        "substandards": [
+          {
+            "code": "7.C.8.1",
+            "text": "Define the concept of region and explain how regions change over time through physical and human processes, such as land use, urban growth, population, natural disasters, and trade."
+          },
+          {
+            "code": "7.C.8.2",
+            "text": "Explain and summarize how common physical or human characteristics can link as well as divide regions (e.g., manmade canals linking European trading centers, the Sahara Desert as both a physical and cultural division of the African continent, religious and political differences leading to armed conflict in Southwest Asia)."
+          },
+          {
+            "code": "7.C.8.3",
+            "text": "Explain patterns of global interdependence, including the impact of changing technology on trade routes, dependence on resources, use of low-cost labor, and the outsourcing of technological and manufacturing jobs to developing regions."
+          },
+          {
+            "code": "7.C.8.4",
+            "text": "Examine indicators of economic interdependence and world trade, including why nations are concerned with the balance of trade, and explain major trade patterns among regions of the Eastern Hemisphere."
+          },
+          {
+            "code": "7.C.8.5",
+            "text": "Explain why countries enter into global trade agreements (e.g., Organization of Petroleum Exporting Countries [OPEC], the Association of Southeast Asian Nations [ASEAN] and the African Continental Free Trade Area [AfCFTA])."
+          },
+          {
+            "code": "7.C.8.6",
+            "text": "Describe how political, economic, and cultural forces (e.g., civil wars, terrorism, genocide, ethnic separatism) have challenged political arrangements (e.g., political status of Taiwan to China, the division of Sudan and South Sudan)."
+          },
+          {
+            "code": "7.C.8.7",
+            "text": "Analyze reasons for conflict and cooperation among regions, evaluating the advantages and disadvantages of international organizations and alliances (e.g., European Union, North Atlantic Treaty Organization, International Red Cross) as they relate to mutual defense, the resolution of disputes, and the response to humanitarian needs."
+          }
+        ]
+      }
+    ]
+  },
+  "Grade 8": {
+    "Practices": [
+      {
+        "id": "8.P.1",
+        "title": "Practice 1: Apply critical thinking skills to address authentic civic issues.",
+        "substandards": [
+          {
+            "code": "8.P.1.1",
+            "text": "Demonstrate an understanding of the virtue of civil discourse to analyze and address real-world problems.\nA. Analyze why the acknowledgement of different perspectives can contribute to civil discourse and solutions to civic issues.\nB. Apply a range of deliberative and democratic procedures to discuss, make decisions, and propose action about real-world problems in and out of school.\nC. Use information to analyze how a specific problem can manifest itself in regional and global issues, describing options for solutions."
+          },
+          {
+            "code": "8.P.1.2",
+            "text": "Develop practices which demonstrate an understanding that social studies involves the evaluation of evidence.\nA. Investigate and propose answers to essential questions representing complex enduring issues across the social studies disciplines.\nB. Answer supporting questions related to social studies content knowledge and make connections to different interpretations.\nC. Develop deeper critical thinking skills by questioning assumptions and identifying inconsistencies or errors in reasoning.\nD. Demonstrate understanding of social studies content through the development of self-driven inquiries and the completion of authentic tasks and assessments."
+          }
+        ]
+      },
+      {
+        "id": "8.P.2",
+        "title": "Practice 2: Use interdisciplinary tools to acquire, apply, and evaluate content understanding of the four strands of social studies.",
+        "substandards": [
+          {
+            "code": "8.P.2.1",
+            "text": "Demonstrate an understanding of the principles of government, the benefits of democratic systems, and their responsibilities as citizens.\nA. Compare and analyze civic virtues and democratic principles in historic and global settings, explaining how they influence political institutions.\nB. Compare the powers and responsibilities of the United States of America’s government to other forms of government, including the roles and rights of citizens.\nC. Examine the impact of constitutions, laws, treaties, and international agreements on the limits of government, including the concepts of sovereignty and the rule of law."
+          },
+          {
+            "code": "8.P.2.2",
+            "text": "Develop skills which demonstrate an understanding of historical events and the people who shaped our history.\nA. Gather and draw conclusions from sources of evidence, identifying plausible author, occasion, audience, purpose, and possible bias.\nB. Describe multiple factors and explain how they can influence the perspectives of individuals and groups on events from history and the modern era.\nC. Distinguish multiple causation, including immediate versus long-term cause-effect relationships; construct timelines of related events."
+          },
+          {
+            "code": "8.P.2.3",
+            "text": "Demonstrate a mastery of geographic concepts and the use of geographic tools to understand the impact of geography on the past and present.\nA. Answer geographic questions and conduct investigations by acquiring, organizing, and interpreting information about the modern world and historical events.\nB. Use multiple mapping techniques, data visuals, satellite images, and geographic technology to analyze spatial patterns of physical and human characteristics, making connections between regions.\nC. Explain how the environment affects cultural patterns and historical events, providing opportunities and challenges for human development."
+          },
+          {
+            "code": "8.P.2.4",
+            "text": "Identify the principles of economic systems and develop an understanding of the benefits of a market system in local, national, and global settings.\nA. Analyze, interpret, and compare economic data from multiple charts and graphs.\nB. Identify different types of economic systems, comparing advantages and disadvantages for citizens and the growth of a nation’s economy.\nC. Explain how technology and trade impact standard of living and economic interdependence, using historical or contemporary examples."
+          }
+        ]
+      },
+      {
+        "id": "8.P.3",
+        "title": "Practice 3: Engage in critical, active reading of primary and secondary sources related to social studies concepts.",
+        "substandards": [
+          {
+            "code": "8.P.3.1",
+            "text": "Comprehend, evaluate, and synthesize textual sources to acquire and refine knowledge in the social studies.\nA. Paraphrase the main idea and cite evidence from primary and secondary sources; provide an accurate summary of a source distinct from prior knowledge or opinion.\nB. Integrate the use of visual information (e.g., maps, charts, photographs, videos, political cartoons, artwork) with textual information from primary and secondary sources to draw conclusions."
+          },
+          {
+            "code": "8.P.3.2",
+            "text": "Apply critical reading and thinking skills to interpret, evaluate, and respond to a variety of complex texts and perspectives.\nA. Analyze works written on the same topic and compare methods the authors use to achieve similar or different purposes.\nB. Evaluate textual evidence to determine whether a claim is substantiated.\nC. Engage in collaborative discussions about information presented in social studies texts, expressing ideas clearly while building on the ideas of others"
+          }
+        ]
+      },
+      {
+        "id": "8.P.4",
+        "title": "Practice 4: Develop a variety of evidence-based written products designed for multiple purposes.",
+        "substandards": [
+          {
+            "code": "8.P.4.1",
+            "text": "Summarize and paraphrase, integrate evidence, and cite sources to create written products, research projects, and presentations for multiple purposes related to social studies content.\nA. Compose informative essays and other written products using and citing evidence (e.g. facts, examples, details) from multiple sources and maintaining an organized structure.\nB. Compose argumentative written products by introducing a claim, recognizing an opposing viewpoint, and organizing evidence and reasoning from credible sources."
+          },
+          {
+            "code": "8.P.4.2",
+            "text": "Engage in authentic research to acquire, refine, and share knowledge through written presentations and products.\nA. Refine and formulate viable research questions related to social studies investigations, using well-developed theses or claims.\nB. Quote, paraphrase, and summarize findings, avoiding plagiarism.\nC. Organize and create presentations or products using research from a variety of formats and encompassing different points of view."
+          }
+        ]
+      }
+    ],
+    "Content": [
+      {
+        "id": "8.C.1",
+        "title": "Standard 1: Analyze the foundations of the United States of America by examining the causes, events, and ideologies which led to the American Revolution.",
+        "substandards": [
+          {
+            "code": "8.C.1.1",
+            "text": "Analyze the political and economic climate in the British colonies on the eve of the French and Indian War.\nA. Examine how the unofficial British policy of salutary neglect created an environment suited to self-determination in the colonies.\nB. Explain how the British policy of mercantilism sought to increase England’s prosperity through restrictive trade practices, such as the Navigation Acts.\nC. Examine how British colonial ideas and practices of self-government (e.g., town meetings and colonial legislatures) influenced American political thought.\nD. Describe the influence of the First Great Awakening on concepts related to individual equality and self-rule, including its role in promoting a revolutionary fervor.\nE. Examine the goals of the Albany Plan of Union and how it reflected colonial reactions to changing imperial economic policies.\nF. Compare the Haudenosaunee (Iroquois) Confederacy with early attempts to unite the colonies."
+          },
+          {
+            "code": "8.C.1.2",
+            "text": "Summarize the political and economic consequences of the French and Indian War.\nA. Explain Parliament’s rationale for levying new forms of taxation.\nB. Describe how the Proclamation of 1763 and its restriction on migration into American Indian sovereign territories fed discontent among the colonies."
+          },
+          {
+            "code": "8.C.1.3",
+            "text": "Examine growing tensions between the North American colonies and Britain.\nA. Analyze the primary cause of the American Revolution as it relates to violations of rights as Englishmen, exemplified in the lack of colonial representation in Parliament.\nB. Describe the effect on colonial economics and local self-government created by the series of trade restrictions and imposed taxes, such as the Sugar Act, Stamp Act, Townshend Acts, and Quartering Act.\nC. Explain the strategies utilized by colonists to oppose imperial policies, including the issuance of the Stamp Act Resolves and the use of propaganda, exemplified by the work of the Committees of Correspondence, the Sons of Liberty, and the boycott of British goods.\nD. Describe escalating tensions, exemplified by the Boston Massacre and the Boston Tea Party.\nE. Explain continued attempts by Parliament to exert its authority through the Coercive Acts (Intolerable Acts), prompting the formation of the First Continental Congress and its Declaration of Resolves, stating that colonists possess the same rights as Englishmen.\nF. Explain why the Battles of Lexington and Concord were perceived as major military victories, known as the “shot heard ‘round the world.”"
+          },
+          {
+            "code": "8.C.1.4",
+            "text": "Analyze how the Second Continental Congress functioned as the de facto national government, uniting colonial response.\nA. Describe how the congress successfully formed the Continental Army, directed military strategy, established a national currency, and negotiated a foreign alliance with France.\nB. Explain the purpose and outcome of the Olive Branch Petition as the colonists’ final attempt to avoid war by affirming loyalty yet seeking the king’s intervention.\nC. Summarize the decision to appoint a committee to draft a declaration of independence."
+          },
+          {
+            "code": "8.C.1.5",
+            "text": "Analyze the significance of the Declaration of Independence as a founding statement of American thought on the constitutional republic and the purpose of government.\nA. Read and discuss the Declaration of Independence as drafted by Thomas Jefferson, influenced by the Committee of Five, and adopted July 4, 1776.\nB. Describe the intellectual origins of American political thought as proposed by such Enlightenment philosophers as John Locke and his theory on natural rights.\nC. Identify the purpose of government as the protection of unalienable individual rights and liberties.\nD. Explain how a social contract exists between citizens and their government, requiring the consent of the governed, as well as the right of citizens to alter their governments when abusive.\nE. Evaluate the diverse political, economic, and religious influences that shaped colonial arguments for independence.\nF. Identify specific economic and political grievances against British policies used by the colonists to justify independence."
+          }
+        ]
+      },
+      {
+        "id": "8.C.2",
+        "title": "Standard 2: Examine key military and diplomatic events of the Revolutionary War that resulted in an independent nation.",
+        "substandards": [
+          {
+            "code": "8.C.2.1",
+            "text": "Summarize the effectiveness of the Articles of Confederation as the first national system of government for the purpose of conducting the war against Britain."
+          },
+          {
+            "code": "8.C.2.2",
+            "text": "Evaluate the motivations and points of view of various populations to remain loyal to Britain, join the patriot cause, or choose neutrality.\nA. Explain major arguments supporting the Patriot cause by analyzing the speech, Give Me Liberty or Give Me Death, attributed to Patrick Henry, and Common Sense by Thomas Paine.\nB. Compare political, economic, and family interests which influenced Loyalists views.\nC. Explain how the preservation of homelands, cultures, and trade affected the stance taken by many American Indians.\nD. Describe how the promise of political equality impacted the views of women, by examining the writings of Mercy Otis Warren and Phillis Wheatley.\nE. Examine the views of free and enslaved Blacks toward the revolution, including petitions to colonial governments for a ban on slavery and the British recruitment of enslaved Black men in exchange for freedom."
+          },
+          {
+            "code": "8.C.2.3",
+            "text": "Evaluate the challenges and reasons for the colonial victory over the British Empire.\nA. Compare military strength and available resources, including financial support from private individuals and allied nations, as well as French support negotiated by Benjamin Franklin.\nB. Summarize the impact of key military turning points of the Revolutionary War, including the victories at Boston, Trenton, Saratoga, and Yorktown.\nC. Explain how an effective military force was shaped by the leadership of General George Washington, Thomas Paine's The Crisis, and conditions at the Valley Forge encampment.\nD. Describe the significance of the Treaty of Paris (1783) as it relates to the recognition of the United States of America as an independent nation and the extension of American authority over western territory ceded by Britain."
+          }
+        ]
+      },
+      {
+        "id": "8.C.3",
+        "title": "Standard 3: Examine the formation of the United States of America’s system of government following the Revolutionary War and the creation of the Constitution of the United States of America.",
+        "substandards": [
+          {
+            "code": "8.C.3.1",
+            "text": "Examine conditions in the new nation that led to the Constitutional Convention in Philadelphia in 1787.\nA. Identify strengths of the United States of America’s government operating under the Articles of Confederation, including a solution to territorial disputes, as resolved by the Northwest Ordinance and the organization necessary to win the war.\nB. Identify the weaknesses of the Articles of Confederation, including the lack of a common national currency, means for common defense, national judiciary to settle disputes among the states, inability to tax as a means to address the war debt, and the required unanimous vote by states to amend the document.\nC. Describe how severe economic conditions and civil unrest, typified by Shays’ Rebellion, contributed to a call for revision of the Articles of Confederation."
+          },
+          {
+            "code": "8.C.3.2",
+            "text": "Analyze the significance of the Constitutional Convention on the formation of a new organization for national government.\nA. Identify the relationship between the principles established in the Declaration of Independence and the government created by the Constitution of the United States of America.\nB. Describe the role of leaders at the Constitutional Convention, including its President George Washington, the influence of James Madison, and the contributions of Roger Sherman.\nC. Explain how the key debate regarding state representation in Congress, presented by opposing Virginia and New Jersey Plans, was resolved by the Great Compromise, creating a bicameral legislature.\nD. Explain how the Three-Fifths Compromise over congressional representation and the Fugitive Slave Clause avoided the slavery issue and maintained the institution in both northern and\nsouthern states by permitting each state to maintain, restrict, or abolish slavery and delaying a ban on the slave trade.\nE. Examine the rationales for the creation and functioning of the Electoral College."
+          },
+          {
+            "code": "8.C.3.3",
+            "text": "Examine the process to ratify the Constitution of the United States of America.\nA. Identify major reasons advocating for the adoption of the Constitution of the United States of America as expressed by leading Federalists James Madison, Alexander Hamilton, and John Jay.\nB. Explain criticism posed by Anti Federalists, such as George Mason, regarding concerns over the potential abuse of power by a strong central government and the omission of a national bill of rights.\nC. Compare major arguments regarding ratification of the Constitution of the United States of America as found in Federalist Papers #1, #10, #51, and #84 to Anti Federalist publications under the pen names of Cato and Brutus."
+          }
+        ]
+      },
+      {
+        "id": "8.C.4",
+        "title": "Standard 4: Examine the key principles and structure of the United States of America’s government as established by the Constitution of the United States of America.",
+        "substandards": [
+          {
+            "code": "8.C.4.1",
+            "text": "Analyze the need for a written constitution, tracing the foundation of self-government established in the Mayflower Compact, including its responsibilities to citizens as expressed in the Preamble to the Constitution of the United States of America."
+          },
+          {
+            "code": "8.C.4.2",
+            "text": "Examine the structure and principles of the United States of America’s government established in the Constitution of the United States of America, focusing on the Framers’ intent to limit and disperse the powers of government in order to prevent abuse.\nA.  Examine the purpose of government, including its responsibilities to citizens, as expressed in the Preamble to the Constitution of the United States of America.\nB.  Explain why the Framers of the Constitution of the United States of America separated governmental powers among three branches (separation of powers), comparing the qualifications, terms of office, and process for removal of members of Congress, the President, and federal judges.\nC. Identify the constitutional powers granted to Congress, the President, and the Supreme Court, using historical and contemporary examples.\nD. Analyze the system of checks and balances, explaining the Framers’ rationale for establishing such a system and describing how each branch of government can limit the power of other branches.\nE. Describe the concept of federalism (shared power) and identify specific types of powers (e.g., express, concurrent, reserved) exercised by the state versus national government, providing contemporary examples.\nF. Explain how the Supremacy Clause establishes the Constitution of the United States as the “supreme law of the Land” laying the foundation for the relationship between federal and state levels of authority."
+          },
+          {
+            "code": "8.C.4.3",
+            "text": "Evaluate the significance of the Commerce Clause in establishing a constitutional relationship between American Indian Tribal Nations and the United States government.\nA. Explain that the Constitution of the United States of America grants Congress authority to regulate commerce with Tribal Nations, forming the constitutional basis for federal authority in American Indian affairs.\nB. Examine how early Supreme Court decisions, often referred to as the “Marshall Trilogy,” defined Tribal Nations as “domestic dependent nations,” recognizing limited sovereignty while placing Tribal governments under the authority and protection of the United States of America.\nC. Explain that Tribal governments retain powers of internal self-government, including making and enforcing laws, determining citizenship, and managing lands and natural resources, while operating within a constitutional framework in which Congress holds authority over American Indian affairs."
+          },
+          {
+            "code": "8.C.4.4",
+            "text": "Examine the steps of the legislative process.\nA. Describe the constitutional roles of Congress and the President to produce necessary legislation in order to meet public needs.\nB. Trace the basic steps of the legislative process using contemporary examples."
+          },
+          {
+            "code": "8.C.4.5",
+            "text": "Analyze the rights and liberties guaranteed to all citizens in the Bill of Rights.\nA. Explain the Constitutional amendment process, using the Bill of Rights as an example.\nB. Describe the influence of James Madison and the Virginia Declaration of Rights to the development of the Bill of Rights, including the significance of the Virginia Statute for Religious Freedom as a forerunner of the First Amendment.\nC. Examine individual rights, liberties, and protections of due process guaranteed by the Bill of Rights.\nD. Explain how the Bill of Rights protects individuals from abuse by the national government with most of its provisions being applied to the states through the 14th Amendment.\nE. Describe how the Bill of Rights and the United States of America’s judicial system uphold the rule of law guaranteeing fair and equal application of the law and the accountability of all persons under it.\nF. Explain the importance of an independent judicial system to the interpretation and defense of citizens’ rights and liberties."
+          },
+          {
+            "code": "8.C.4.6",
+            "text": "Define civic virtue and explain the individual’s duties and responsibilities.\nA. Describe the right to vote and public service as the cornerstones of a constitutional republic.\nB. Examine other political rights and responsibilities of citizens, such as engaging in informed civil discourse and non-violent protest,, serving on juries, and participating in political campaigns.\nC. Identify responsibilities of both citizens and residents of the United States of America, including obedience to the law, registering for military service, and paying taxes."
+          }
+        ]
+      },
+      {
+        "id": "8.C.5",
+        "title": "Standard 5: Examine the political and economic changes that occurred during the Early Federal Period.",
+        "substandards": [
+          {
+            "code": "8.C.5.1",
+            "text": "Assess the legacy of President Washington on the nature of the presidency and the executive branch.\nA. Describe the purpose of the Cabinet as established by Washington and its role in today’s executive branch.\nB. Analyze the impact of the Whiskey Rebellion and the presidential authority to enforce federal law.\nC. Examine Washington’s attempt to develop a cohesive American Indian policy through treaties, assimilation, and the delineation of Tribal lands.\nD. Explain the intent and impact of Washington’s decision not to seek a third term in office.\nE. Read and discuss Washington’s advice as expressed in his Farewell Address regarding political factions, foreign alliances, and the relationship between morality and self-government."
+          },
+          {
+            "code": "8.C.5.2",
+            "text": "Evaluate the impact of the Alien and Sedition Acts on individual rights during the Adams Administration, including the responses of the Democratic-Republicans, as expressed in the Virginia and Kentucky Resolutions."
+          }
+        ]
+      },
+      {
+        "id": "8.C.6",
+        "title": "Standard 6: Analyze the political, constitutional, and geographic changes that occurred during the Jeffersonian Era.",
+        "substandards": [
+          {
+            "code": "8.C.6.1",
+            "text": "Explain issues surrounding the electoral process of the presidential election of 1800, its resolution by the 12th Amendment, and the significance of a peaceful transfer of power."
+          },
+          {
+            "code": "8.C.6.2",
+            "text": "Analyze the exercise of the Supreme Court’s authority under the leadership of Chief John Marshall by explaining how the Marbury v. Madison decision confirmed the principle of judicial review."
+          },
+          {
+            "code": "8.C.6.3",
+            "text": "Examine the policies of President Thomas Jefferson by describing significant decisions to\nA. promote a western expansionist policy through the acquisition of the Louisiana Territory and authorization of the Lewis and Clark Corps of Discovery Expedition.\nB. initiate the process of Tribal removals and the eventual establishment of Indian Territory.\nC. implement the Embargo Act to defend the nation's industries from British threats and stimulate manufacturing."
+          }
+        ]
+      },
+      {
+        "id": "8.C.7",
+        "title": "Standard 7: Examine the political, economic and social transformations during the “Era of Good Feelings.”",
+        "substandards": [
+          {
+            "code": "8.C.7.1",
+            "text": "Analyze how the War of 1812 confirmed the independence of the United States of America.\nA. Summarize the causes of the war, including British trade restrictions and impressment.\nB. Explain how the war fueled a spirit of nationalism, reflected in the lyrics of the national anthem.\nC. Describe how the Era of Good Feelings was marked by a sense of nationalism and patriotism."
+          },
+          {
+            "code": "8.C.7.2",
+            "text": "Examine the Monroe Doctrine as a policy of isolationism which was designed to protect the United States of America’s interests in the Western Hemisphere."
+          },
+          {
+            "code": "8.C.7.3",
+            "text": "Analyze the impact of McCulloch v. Maryland which established federal supremacy concerning taxation."
+          },
+          {
+            "code": "8.C.7.4",
+            "text": "Examine the increased tension between Southern sectionalist and Northern nationalist perspectives toward the expansion of slavery into western territories."
+          },
+          {
+            "code": "8.C.7.5",
+            "text": "Analyze congress’ attempt to balance sectional interests and political power, by describing the impact of the Missouri Compromise on the expansion of slavery, both delaying the Civil War and sowing its seeds."
+          }
+        ]
+      },
+      {
+        "id": "8.C.8",
+        "title": "Standard 8: Examine the political, economic and social transformations of the Jacksonian Era.",
+        "substandards": [
+          {
+            "code": "8.C.8.1",
+            "text": "Describe the factors that led to the election of President Andrew Jackson, including state laws expanding white male suffrage and Jackson’s identification with the “common man.”"
+          },
+          {
+            "code": "8.C.8.2",
+            "text": "Analyze the impact of the Nullification Crisis on the development of the states’ rights debate.\nA. Explain how provisions of the Constitution (Supremacy Clause; Article III) addressed the theoretical right to reject federal laws.\nB. Describe President Jackson’s reaction to the crisis, based on his fear of secession and destruction of the Union.\nC. Examine how the Nullification Crisis illustrated the growing tensions between sections of the nation and the public."
+          },
+          {
+            "code": "8.C.8.3",
+            "text": "Analyze the impact of President Andrew Jackson’s policies concerning American Indian Nations and their sovereignty during the early nineteenth century.\nA. Explain the federal government’s inconsistent adherence to treaties with Tribal Nations and the political pressures from states seeking control over Tribal lands.\nB. Examine the Supreme Court’s Decision in Worcester v. Georgia and analyze the constitutional conflict between federal authority, state governments, and Tribal Nations during the Jackson administration. Students should understand: Tribes were not originally considered states or foreign nations under the Constitution. In Cherokee Nation v. Georgia, the Supreme Court ruled the Cherokee Nation lacked\nstanding as a foreign nation and described tribes as “domestic dependent Nations.”\nC. Analyze how President Andrew Jackson supported state authority in conflicts with Tribal governments and how this position influenced federal policy toward Indian removal. This allows teachers to explain Jackson’s famous response to Worcester, which reflected his broader states’ rights political philosophy and his view that he governed all states of the Union.\nD. Describe the resistance of Tribal Nations to removal policies and encroachment onto Tribal lands, including legal challenges and political advocacy.\nE. Explain the series of forced removals of Tribal citizens from their homelands to Indian Territory, often referred to as the Trail of Tears. Reference: Trail of Tears and Indian Removal Act\nF. Evaluate differing perspectives among Native and American leaders regarding removal policies, including the views of Cherokee leaders such as John Ross and Major Ridge, as well as opposition from politicians such as Davy Crockett and various Christian missionaries. Students should also understand that: Cherokee leaders such as Ross and Ridge had served alongside Americans in earlier conflicts, including the War of 1812. They later disagreed on how to respond to removal pressures, creating divisions within the Cherokee Nation."
+          }
+        ]
+      },
+      {
+        "id": "8.C.9",
+        "title": "Standard 9: Examine the political, economic, social, and geographic changes that occurred during the period of westward movement.",
+        "substandards": [
+          {
+            "code": "8.C.9.1",
+            "text": "Examine multiple perspectives on the justification for and impact on westward expansion and analyze the influence of immigration.\nA. Explain how the fur trade provided economic incentive for early exploration of the West including the crucial role played by traders and frontiersmen (e.g., Jedediah Smith, John C. Fremont, Kit Carson) in transcontinental migration (e.g., mapping of vast territory, establishing trade routes and relations with Native peoples).\nB. Define the concept of Manifest Destiny including its belief in the inevitable spread of American institutions (e.g., religion, government, culture) and analyze claims made in such writings as The Great Nation of Futurity by John O’Sullivan.\nC. Explain how the idea of Manifest Destiny influenced migration by identifying push and pull factors impacting the settlement of western territories.\nD. Analyze the impact of the waves of immigration from Northern Europe on settlement patterns.\nE. Analyze Alexis de Tocqueville’s claim regarding the concept of American exceptionalism and identify ways in which America has been an “exception to the rule” (e.g., stability, realizations of liberty and civil equality, prosperity, innovation)."
+          },
+          {
+            "code": "8.C.9.2",
+            "text": "Analyze the territorial growth of the United States of America and the consequences of westward expansion.\nA. Summarize the series of events and the processes used to annex Texas, as well as acquire the Mexican Cession and the Gadsden Purchase.\nB. Describe the impact of the Treaty of Guadalupe Hidalgo on Mexican Americans (e.g., United States of America citizenship, displacement and land loss).\nC. Describe the continued political pressure to maintain a balance of free and slave states.\nD. Compare the motivations and experiences of individuals and groups who seized opportunities of the West, including those engaged in the California Gold Rush, the settlement of Oregon, and the Mormon migration.\nE. Describe the impact of westward migration on American Indian culture, homelands, Tribal sovereignty, and the growing sectional tensions regarding the expansion of slavery in new territories."
+          }
+        ]
+      },
+      {
+        "id": "8.C.10",
+        "title": "Standard 10: Analyze the social and economic transformations of the early nineteenth century.",
+        "substandards": [
+          {
+            "code": "8.C.10.1",
+            "text": "Explain the impact of the Industrial Revolution on American culture and its economy.\nA. Describe major technological improvements and inventions that contributed to industrial growth in the North, resulting in heavily populated manufacturing and transportation centers.\nB. Explain how the invention of the cotton gin impacted Southern plantation economies by increasing the profitability of the crop and leading to the expansion of slavery.\nC. Analyze the connection between cotton production in the South to the economic success of Northern textile industries.\nD. Examine the role of women as the primary workforce in New England textile factories and leaders in the reform of working conditions.\nE. Examine the rise of nativist movements in response to increased immigration during industrialization, including debates over assimilation, labor competition, and political influence."
+          },
+          {
+            "code": "8.C.10.2",
+            "text": "Analyze experiences of enslaved persons, including common conditions of life under slavery, acts of resistance to slavery, such as Nat Turner’s Rebellion, and legal restrictions, such as Slave Codes."
+          },
+          {
+            "code": "8.C.10.3",
+            "text": "Summarize the impact of the Abolitionist Movement on the institution of slavery.\nA. Assess the impact of the work of notable abolitionists, such as Frederick Douglass, William Lloyd Garrison, and Sojourner Truth.\nB. Describe the rise of the Underground Railroad, including the efforts of Harriet Tubman and the impact of Harriet Beecher Stowe’s Uncle Tom’s Cabin on the abolitionist movement."
+          },
+          {
+            "code": "8.C.10.4",
+            "text": "Evaluate the goals and efforts of the Women’s Suffrage Movement toward political equality.\nA. Trace the emergence of the women’s rights movement from the abolitionist movement.\nB. Describe the role of the movement’s primary leaders (e.g., Susan B. Anthony, Elizabeth Cady Stanton, Lucretia Mott, Grimké sisters).\nC. Identify the ideals, democratic principles, and demands expressed in the Declaration of Sentiments."
+          },
+          {
+            "code": "8.C.10.5",
+            "text": "Evaluate the significance and key leaders of the Second Great Awakening including how it sparked a number of reform movements, such as temperance and abolitionism, which addressed societal issues."
+          }
+        ]
+      },
+      {
+        "id": "8.C.11",
+        "title": "Standard 11: Analyze slavery as the principal cause of increased sectional polarization leading to the Civil War.",
+        "substandards": [
+          {
+            "code": "8.C.11.1",
+            "text": "Evaluate the goals of the Compromise of 1850 regarding the issue of slavery.\nA. Describe the series of measures proposed by Senator Henry Clay to avert the threat of dissolution of the Union, including a strengthened Fugitive Slave Act and the application of popular sovereignty regarding the spread of slavery into new states.\nB. Explain why the Compromise of 1850 may have succeeded as a temporary solution but proved that compromise could not offer a permanent solution to the issue of slavery."
+          },
+          {
+            "code": "8.C.11.2",
+            "text": "Analyze the impact of the Kansas-Nebraska Act, the growing tension, and inevitability of a civil war.\nA. Explain how popular sovereignty in new territories regarding the institution of slavery led to factional feuds in “Bleeding Kansas.”\nB. Examine why the North opposed the possibility that northern territories such as Kansas and Nebraska might adopt slavery, which had been prevented by the Missouri Compromise.\nC. Evaluate the impact of the Dred Scott v. Sandford decision, which denied citizenship to African Americans and ruled enslaved persons as property.\nD. Examine the motives and impact for John Brown’s Raid on the federal arsenal at Harpers Ferry."
+          }
+        ]
+      },
+      {
+        "id": "8.C.12",
+        "title": "Standard 12: Analyze the course and consequences of the Civil War.",
+        "substandards": [
+          {
+            "code": "8.C.12.1",
+            "text": "Analyze major issues of the presidential election of 1860 and its immediate consequences.\nA.  Describe the fragmentation of the national party system during the election of 1860 and its role in sectional division.\nB.  Identify President Lincoln’s stance on slavery and intention of preserving the Union, as stated in his Cooper Union Address.\nC. Explain slavery as the central factor for the secession of southern states by examining passages from state secession declarations.\nD. Describe tensions over the strategic and internally divided border states.\nE. Trace the formation of the Confederate States of America under the leadership of Jefferson Davis.\nF. Describe how the Confederate attack on Fort Sumter ignited armed civil conflict."
+          },
+          {
+            "code": "8.C.12.2",
+            "text": "Evaluate the advantages and disadvantages of the Union and the Confederacy.\nA. Compare natural resources, population, and industrialization.\nB. Describe the significance of military leadership and experience (e.g., Robert E. Lee, Ulysses S. Grant).\nC. Examine the contributions of free and enslaved persons, such as the 54th Massachusetts Regiment.\nD.Describe the value of immigrant troops drafted or recruited to fill Union ranks."
+          },
+          {
+            "code": "8.C.12.3",
+            "text": "Identify the key strategies used during the war and evaluate their effectiveness in determining the war’s outcome.\nA. Compare the goal of the Union’s Anaconda Plan to surround and blockade Confederate forces to the goal and strategy of Sherman’s “Total War” strategy.\nB. Describe how the Southern military strategy focused on holding Confederate territory in hopes the North would eventually abandon the war effort.\nC. Examine the lasting impact of the Civil War, focusing on its devastation of property and the national economy, unrestricted use of weaponry, and the involvement of civilians."
+          },
+          {
+            "code": "8.C.12.4",
+            "text": "Summarize the significance of key battles and turning points of the Civil War.\nA. Explain how the Battle of Antietam proved that the Union could withstand the Confederate Army, providing Lincoln the confidence to issue the Emancipation Proclamation.\nB. Analyze the Emancipation Proclamation’s role in expanding the goals of the war and its impact on slavery, including the significance of Juneteenth.\nC. Describe how the Battle of Gettysburg ended the Confederate attempt to invade the North and analyze Lincoln’s Gettysburg Address clarifying the Union’s motivation for winning the war.\nD. Explain how the Confederate loss of Vicksburg opened the way for the North to seize control of the Mississippi River, dividing the Confederate forces.\nE. Describe Lee’s surrender at Appomattox Courthouse and the conditions of Grant’s surrender terms."
+          }
+        ]
+      },
+      {
+        "id": "8.C.13",
+        "title": "Standard 13: Analyze the political, social, and economic transformations during the Reconstruction Era.",
+        "substandards": [
+          {
+            "code": "8.C.13.1",
+            "text": "Examine the challenges of rebuilding the nation following the end of the Civil War.\nA. Evaluate Lincoln’s plans for reconciliation, as expressed in his Second Inaugural Address, and the impact of his assassination on Reconstruction.\nB. Compare the plans and policies proposed for Reconstruction (e.g., President Andrew Johnson, the Congressional Republicans) assessing their intended goals and possible consequences."
+          },
+          {
+            "code": "8.C.13.2",
+            "text": "Analyze the impact of state and federal legislation following the Civil War.\nA. Explain the impact of the 13th, 14th, and 15th Amendments on the status of formerly enslaved persons, as well as the relationship of the federal government to the states.\nB. Assess the impact of the Civil War Amendments in securing political rights for African Americans, resulting in their election to state and national government positions.\nC. Evaluate the efforts of the Freedmen’s Bureau to assist freed persons with economic, educational, and political opportunities.\nD. Describe how the adoption of Black Codes by many southern state legislatures restricted employment and property rights of Freedmen."
+          },
+          {
+            "code": "8.C.13.3",
+            "text": "Analyze the emerging social structure of the postwar South.\nA. Identify the various motives of carpetbaggers including economic gain, exploitative aims, and genuine concern for the civil and political rights of freed Blacks.\nB. Describe the expansion of the tenant and sharecropper systems which enabled landowners to reestablish a labor force severely restricting economic mobility.\nC. Examine the political and social goals of the Ku Klux Klan, including its acts of intimidation and violence against African Americans.\nD. Describe the migration of African Americans from the discriminatory conditions of the South to opportunities in the north and west."
+          },
+          {
+            "code": "8.C.13.4",
+            "text": "Assess the lasting impact of factors leading to the end of Reconstruction.\nA. Describe the result of a lack of enforcement of the 14th and 15th Amendments.\nB. Examine the development of segregated societies in the South as a result of social norms and legal statutes such as Black Codes.\nC. Explain the effects of the presidential election of 1876 and the Compromise of 1877 on Reconstruction."
+          },
+          {
+            "code": "8.C.13.5",
+            "text": "Evaluate the impact of federal policies related to the on-going migration and settlement of the West.\nA. Describe how the Homestead Act of 1862 enabled more individuals to obtain land and partake in economic opportunities following the war.\nB. Analyze the impact of the development of the Transcontinental Railroad on connecting agricultural goods and products to population centers and markets.\nC. Summarize the intent of President Grant’s Peace Policy on the displacement of American Indians from their homelands.\nD. Describe the impact of Grant’s policy of government-run boarding schools and missions directed to assimilate Tribal members.\nE. Describe escalating conflict between American Indians, military forces, and civilians (e.g., Whitman Mission and Sand Creek Massacres)."
+          }
+        ]
+      }
+    ]
+  }
+};
+
+    // DOM Elements
+    const gradeSelect = document.getElementById('gradeSelect');
+    const typeSelect = document.getElementById('typeSelect');
+    const standardSelect = document.getElementById('standardSelect');
+    const resetBtn = document.getElementById('resetBtn');
+    const standardsList = document.getElementById('standardsList');
+    const resultsCount = document.getElementById('resultsCount');
+
+    // Populate Grades on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      Object.keys(oklahomaStandards).forEach(grade => {
+        const option = document.createElement('option');
+        option.value = grade;
+        option.textContent = grade;
+        gradeSelect.appendChild(option);
+      });
+    });
+
+    // Step 1 Change: Grade Selected
+    gradeSelect.addEventListener('change', () => {
+      resetDropdown(typeSelect, '-- Choose Type --');
+      resetDropdown(standardSelect, '-- Choose Broad Standard --');
+      disableInputs([typeSelect, standardSelect]);
+
+      if (gradeSelect.value) {
+        typeSelect.disabled = false;
+        ['Content', 'Practices'].forEach(type => {
+          const option = document.createElement('option');
+          option.value = type;
+          option.textContent = type === 'Content' ? 'Content Standards' : 'Social Studies Practices';
+          typeSelect.appendChild(option);
+        });
+      }
+      clearResults('Select standard type and broad standard above.');
+    });
+
+    // Step 2 Change: Type Selected
+    typeSelect.addEventListener('change', () => {
+      resetDropdown(standardSelect, '-- Choose Broad Standard --');
+      disableInputs([standardSelect]);
+
+      const selectedGrade = gradeSelect.value;
+      const selectedType = typeSelect.value;
+
+      if (selectedGrade && selectedType) {
+        standardSelect.disabled = false;
+        
+        // Add "All Broad Standards" option
+        const allOption = document.createElement('option');
+        allOption.value = "ALL";
+        allOption.textContent = "-- Show All Broad Standards --";
+        standardSelect.appendChild(allOption);
+
+        const broadStandards = oklahomaStandards[selectedGrade][selectedType];
+        broadStandards.forEach(std => {
+          const option = document.createElement('option');
+          option.value = std.id;
+          option.textContent = std.title;
+          standardSelect.appendChild(option);
+        });
+      }
+      clearResults('Select a broad standard to display substandards.');
+    });
+
+    // Step 3 Change: Broad Standard Selected
+    standardSelect.addEventListener('change', () => {
+      if (standardSelect.value) {
+        renderStandards();
+      } else {
+        clearResults();
+      }
+    });
+
+    // Reset Button: clear all selections back to the start
+    resetBtn.addEventListener('click', () => {
+      gradeSelect.value = '';
+      resetDropdown(typeSelect, '-- Choose Type --');
+      resetDropdown(standardSelect, '-- Choose Broad Standard --');
+      disableInputs([typeSelect, standardSelect]);
+      clearResults();
+    });
+
+    // Main Render Function
+    function renderStandards() {
+      const selectedGrade = gradeSelect.value;
+      const selectedType = typeSelect.value;
+      const selectedBroadId = standardSelect.value;
+
+      if (!selectedGrade || !selectedType || !selectedBroadId) return;
+
+      const broadList = oklahomaStandards[selectedGrade][selectedType];
+      let substandardsToDisplay = [];
+
+      broadList.forEach(broadStd => {
+        if (selectedBroadId === "ALL" || broadStd.id === selectedBroadId) {
+          broadStd.substandards.forEach(sub => {
+            substandardsToDisplay.push({
+              ...sub,
+              broadTitle: broadStd.title,
+              isPractice: selectedType === 'Practices'
+            });
+          });
+        }
+      });
+
+      // Render Cards
+      standardsList.innerHTML = '';
+      resultsCount.textContent = `${substandardsToDisplay.length} item(s) found`;
+
+      if (substandardsToDisplay.length === 0) {
+        standardsList.innerHTML = `<div class="empty-state">No matching substandards found.</div>`;
+        return;
+      }
+
+      substandardsToDisplay.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `standard-card ${item.isPractice ? 'practice' : ''}`;
+
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="code-badge">${item.code}</span>
+            <span class="strand-tag">${item.broadTitle}</span>
+          </div>
+          <p class="card-text">${item.text}</p>
+          <button class="copy-btn" onclick="copyToClipboard('${item.code}: ${escapeQuotes(item.text)}')">📋 Copy Standard</button>
+        `;
+        standardsList.appendChild(card);
+      });
+    }
+
+    // Helper Utilities
+    function resetDropdown(selectElement, defaultText) {
+      selectElement.innerHTML = `<option value="">${defaultText}</option>`;
+    }
+
+    function disableInputs(elements) {
+      elements.forEach(el => el.disabled = true);
+    }
+
+    function clearResults(message = 'Select options above to view standards.') {
+      standardsList.innerHTML = `<div class="empty-state">${message}</div>`;
+      resultsCount.textContent = '0 items shown';
+    }
+
+    function escapeQuotes(str) {
+      return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Standard copied to clipboard!');
+      });
+    }
+  </script>
+</body>
+</html>
