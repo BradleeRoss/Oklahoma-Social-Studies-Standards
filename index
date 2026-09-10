@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oklahoma Social Studies Standards Explorer</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;       /* Oklahoma Blue */
+      --primary-hover: #1d4ed8;
+      --accent: #d97706;        /* Gold/Bronze */
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 20px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .controls-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      margin-bottom: 25px;
+    }
+
+    .grid-filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filter-group label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    select, input[type="text"] {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: #fff;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    select:focus, input[type="text"]:focus {
+      border-color: var(--primary-hover);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .search-box {
+      width: 100%;
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .results-count {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .standards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .standard-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 16px 20px;
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--primary);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      position: relative;
+    }
+
+    .standard-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .standard-card.practice {
+      border-left-color: var(--accent);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .code-badge {
+      background-color: #eff6ff;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .practice .code-badge {
+      background-color: #fffbeeb;
+      color: var(--accent);
+    }
+
+    .strand-tag {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .card-text {
+      font-size: 1rem;
+      color: var(--text-main);
+    }
+
+    .copy-btn {
+      margin-top: 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px dashed var(--border);
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Oklahoma Academic Standards</h1>
+      <p>Social Studies Interactive Lookup Tool</p>
+    </header>
+
+    <div class="controls-card">
+      <div class="grid-filters">
+        <!-- Step 1: Choose Grade -->
+        <div class="filter-group">
+          <label for="gradeSelect">1. Select Grade/Course</label>
+          <select id="gradeSelect">
+            <option value="">-- Choose Grade --</option>
+          </select>
+        </div>
+
+        <!-- Step 2: Choose Practice vs Content -->
+        <div class="filter-group">
+          <label for="typeSelect">2. Select Type</label>
+          <select id="typeSelect" disabled>
+            <option value="">-- Choose Type --</option>
+          </select>
+        </div>
+
+        <!-- Step 3: Choose Broad Standard -->
+        <div class="filter-group">
+          <label for="standardSelect">3. Broad Standard / Strand</label>
+          <select id="standardSelect" disabled>
+            <option value="">-- Choose Broad Standard --</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick Search Filter -->
+      <div class="filter-group">
+        <label for="searchInput">Filter Substandards by Keyword</label>
+        <input type="text" id="searchInput" class="search-box" placeholder="e.g., Constitution, Geography, Trade, Colonial..." disabled>
+      </div>
+    </div>
+
+    <div class="results-header">
+      <h2>Substandards</h2>
+      <span class="results-count" id="resultsCount">0 items shown</span>
+    </div>
+
+    <div class="standards-list" id="standardsList">
+      <div class="empty-state">Select a Grade, Type, and Broad Standard above to view specific substandards.</div>
+    </div>
+  </div>
+
+  <script>
+    /* ====================================================================
+       OKLAHOMA SOCIAL STUDIES ACADEMIC STANDARDS DATA DATASET
+       You can expand or edit this JSON object to add more grades/standards.
+       ==================================================================== */
+    const oklahomaStandards = {
+      "Kindergarten": {
+        "Practices": [
+          {
+            "id": "K.P.1",
+            "title": "Practice 1: Engage in Democratic Processes",
+            "substandards": [
+              { "code": "K.P.1.1", "text": "Demonstrate an understanding of democratic principles, such as equality, fairness, and respect for the law." },
+              { "code": "K.P.1.2", "text": "Identify responsibilities of people in authority in school and community settings." },
+              { "code": "K.P.1.3", "text": "Describe the purpose of rules in various settings and consequences for violating rules." }
+            ]
+          },
+          {
+            "id": "K.P.2",
+            "title": "Practice 2: Read Critically & Interpret Sources",
+            "substandards": [
+              { "code": "K.P.2.1", "text": "Evaluate written text, identifying purpose and point of view as presented in simple primary sources." },
+              { "code": "K.P.2.2", "text": "Identify point of view and examples relevant to the student's experiences." }
+            ]
+          }
+        ],
+        "Content": [
+          {
+            "id": "K.1",
+            "title": "Standard 1: Civics - Traits of Good Citizenship",
+            "substandards": [
+              { "code": "K.1.1", "text": "Describe the importance of rules and personal responsibilities in the family, classroom, and school." },
+              { "code": "K.1.2", "text": "Explain the need to respect the equal dignity and uniqueness of individuals in their class and community." },
+              { "code": "K.1.3", "text": "Identify national and state symbols including the United States flag and the Oklahoma flag." }
+            ]
+          },
+          {
+            "id": "K.2",
+            "title": "Standard 2: History - Symbols and Traditions",
+            "substandards": [
+              { "code": "K.2.1", "text": "Explain history as the events that happened to people of other times and places." },
+              { "code": "K.2.2", "text": "Describe how and why we honor people and events of the past (e.g., national holidays)." }
+            ]
+          }
+        ]
+      },
+      "3rd Grade": {
+        "Practices": [
+          {
+            "id": "3.P.1",
+            "title": "Practice 1: Acquire, Apply, and Evaluate Evidence",
+            "substandards": [
+              { "code": "3.P.1.1", "text": "Gather relevant information from multiple sources to answer inquiry questions." },
+              { "code": "3.P.1.2", "text": "Distinguish between fact and opinion in social studies informational sources." }
+            ]
+          }
+        ],
+        "Content": [
+          {
+            "id": "3.1",
+            "title": "Standard 1: Oklahoma Geography & Resources",
+            "substandards": [
+              { "code": "3.1.1", "text": "Identify state landforms, major rivers, and natural resources using geographic tools and maps." },
+              { "code": "3.1.2", "text": "Examine Oklahoma's climate and vegetation patterns across different regions." }
+            ]
+          },
+          {
+            "id": "3.2",
+            "title": "Standard 2: Oklahoma Early History & Tribal Heritage",
+            "substandards": [
+              { "code": "3.2.1", "text": "Examine the indigenous cultures native to Oklahoma prior to European contact." },
+              { "code": "3.2.2", "text": "Describe the impact of early European explorers and fur traders on Oklahoma." }
+            ]
+          }
+        ]
+      },
+      "8th Grade (US History: Early Colonial to 1877)": {
+        "Practices": [
+          {
+            "id": "8.P.1",
+            "title": "Practice 1: Critical Reading & Textual Analysis",
+            "substandards": [
+              { "code": "8.P.1.1", "text": "Cite specific textual evidence to support analysis of primary and secondary sources." },
+              { "code": "8.P.1.2", "text": "Determine the central ideas or information of a primary or secondary source." }
+            ]
+          }
+        ],
+        "Content": [
+          {
+            "id": "8.1",
+            "title": "Standard 1: Colonial Era & Constitutional Foundations",
+            "substandards": [
+              { "code": "8.1.1", "text": "Analyze the political, economic, and religious causes of European settlement in North America." },
+              { "code": "8.1.2", "text": "Examine the democratic principles embedded in colonial governing documents (e.g., Mayflower Compact)." },
+              { "code": "8.1.3", "text": "Evaluate the causes and major turning points of the American Revolution." }
+            ]
+          },
+          {
+            "id": "8.2",
+            "title": "Standard 2: Westward Expansion & Sectionalism",
+            "substandards": [
+              { "code": "8.2.1", "text": "Examine the concept of Manifest Destiny and territorial growth of the United States." },
+              { "code": "8.2.2", "text": "Analyze the economic, political, and social causes of the American Civil War." }
+            ]
+          }
+        ]
+      },
+      "HS US History (1878 to Present)": {
+        "Practices": [
+          {
+            "id": "HS.P.1",
+            "title": "Practice 1: Evidence-Based Writing & Inquiry",
+            "substandards": [
+              { "code": "HS.P.1.1", "text": "Develop compelling and supporting questions to frame historical inquiries." },
+              { "code": "HS.P.1.2", "text": "Construct argumentations and thesis statements supported by relevant historical evidence." }
+            ]
+          }
+        ],
+        "Content": [
+          {
+            "id": "HS.1",
+            "title": "Standard 1: Transformation of the Nation & Industrialization",
+            "substandards": [
+              { "code": "HS.1.1", "text": "Analyze the impact of industrialization, urbanization, and immigration on American society." },
+              { "code": "HS.1.2", "text": "Evaluate the goals and achievements of the Progressive Era reform movement." }
+            ]
+          },
+          {
+            "id": "HS.2",
+            "title": "Standard 2: World War I & The Great Depression",
+            "substandards": [
+              { "code": "HS.2.1", "text": "Examine the reasons for United States involvement in World War I and its impact domestically." },
+              { "code": "HS.2.2", "text": "Assess the economic causes of the Great Depression and New Deal responses." }
+            ]
+          }
+        ]
+      }
+    };
+
+    // DOM Elements
+    const gradeSelect = document.getElementById('gradeSelect');
+    const typeSelect = document.getElementById('typeSelect');
+    const standardSelect = document.getElementById('standardSelect');
+    const searchInput = document.getElementById('searchInput');
+    const standardsList = document.getElementById('standardsList');
+    const resultsCount = document.getElementById('resultsCount');
+
+    // Populate Grades on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      Object.keys(oklahomaStandards).forEach(grade => {
+        const option = document.createElement('option');
+        option.value = grade;
+        option.textContent = grade;
+        gradeSelect.appendChild(option);
+      });
+    });
+
+    // Step 1 Change: Grade Selected
+    gradeSelect.addEventListener('change', () => {
+      resetDropdown(typeSelect, '-- Choose Type --');
+      resetDropdown(standardSelect, '-- Choose Broad Standard --');
+      disableInputs([typeSelect, standardSelect, searchInput]);
+
+      if (gradeSelect.value) {
+        typeSelect.disabled = false;
+        ['Content', 'Practices'].forEach(type => {
+          const option = document.createElement('option');
+          option.value = type;
+          option.textContent = type === 'Content' ? 'Content Standards' : 'Social Studies Practices';
+          typeSelect.appendChild(option);
+        });
+      }
+      clearResults('Select standard type and broad standard above.');
+    });
+
+    // Step 2 Change: Type Selected
+    typeSelect.addEventListener('change', () => {
+      resetDropdown(standardSelect, '-- Choose Broad Standard --');
+      disableInputs([standardSelect, searchInput]);
+
+      const selectedGrade = gradeSelect.value;
+      const selectedType = typeSelect.value;
+
+      if (selectedGrade && selectedType) {
+        standardSelect.disabled = false;
+        
+        // Add "All Broad Standards" option
+        const allOption = document.createElement('option');
+        allOption.value = "ALL";
+        allOption.textContent = "-- Show All Broad Standards --";
+        standardSelect.appendChild(allOption);
+
+        const broadStandards = oklahomaStandards[selectedGrade][selectedType];
+        broadStandards.forEach(std => {
+          const option = document.createElement('option');
+          option.value = std.id;
+          option.textContent = std.title;
+          standardSelect.appendChild(option);
+        });
+      }
+      clearResults('Select a broad standard to display substandards.');
+    });
+
+    // Step 3 Change: Broad Standard Selected
+    standardSelect.addEventListener('change', () => {
+      searchInput.value = '';
+      if (standardSelect.value) {
+        searchInput.disabled = false;
+        renderStandards();
+      } else {
+        searchInput.disabled = true;
+        clearResults();
+      }
+    });
+
+    // Search Input Event
+    searchInput.addEventListener('input', renderStandards);
+
+    // Main Render Function
+    function renderStandards() {
+      const selectedGrade = gradeSelect.value;
+      const selectedType = typeSelect.value;
+      const selectedBroadId = standardSelect.value;
+      const searchTerm = searchInput.value.toLowerCase().trim();
+
+      if (!selectedGrade || !selectedType || !selectedBroadId) return;
+
+      const broadList = oklahomaStandards[selectedGrade][selectedType];
+      let substandardsToDisplay = [];
+
+      broadList.forEach(broadStd => {
+        if (selectedBroadId === "ALL" || broadStd.id === selectedBroadId) {
+          broadStd.substandards.forEach(sub => {
+            substandardsToDisplay.push({
+              ...sub,
+              broadTitle: broadStd.title,
+              isPractice: selectedType === 'Practices'
+            });
+          });
+        }
+      });
+
+      // Filter by keyword if search box is used
+      if (searchTerm) {
+        substandardsToDisplay = substandardsToDisplay.filter(item => 
+          item.code.toLowerCase().includes(searchTerm) ||
+          item.text.toLowerCase().includes(searchTerm) ||
+          item.broadTitle.toLowerCase().includes(searchTerm)
+        );
+      }
+
+      // Render Cards
+      standardsList.innerHTML = '';
+      resultsCount.textContent = `${substandardsToDisplay.length} item(s) found`;
+
+      if (substandardsToDisplay.length === 0) {
+        standardsList.innerHTML = `<div class="empty-state">No matching substandards found.</div>`;
+        return;
+      }
+
+      substandardsToDisplay.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `standard-card ${item.isPractice ? 'practice' : ''}`;
+
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="code-badge">${item.code}</span>
+            <span class="strand-tag">${item.broadTitle}</span>
+          </div>
+          <p class="card-text">${item.text}</p>
+          <button class="copy-btn" onclick="copyToClipboard('${item.code}: ${escapeQuotes(item.text)}')">📋 Copy Standard</button>
+        `;
+        standardsList.appendChild(card);
+      });
+    }
+
+    // Helper Utilities
+    function resetDropdown(selectElement, defaultText) {
+      selectElement.innerHTML = `<option value="">${defaultText}</option>`;
+    }
+
+    function disableInputs(elements) {
+      elements.forEach(el => el.disabled = true);
+    }
+
+    function clearResults(message = 'Select options above to view standards.') {
+      standardsList.innerHTML = `<div class="empty-state">${message}</div>`;
+      resultsCount.textContent = '0 items shown';
+    }
+
+    function escapeQuotes(str) {
+      return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Standard copied to clipboard!');
+      });
+    }
+  </script>
+</body>
+</html>
